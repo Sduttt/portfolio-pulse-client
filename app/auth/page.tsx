@@ -69,7 +69,7 @@ export default function AuthPage() {
                                 <button
                                     type="button"
                                     onClick={() => setTab("register")}
-                                    className={`rounded-full px-5 py-1.5 text-sm font-semibold transition ${
+                                    className={`rounded-full cursor-pointer px-5 py-1.5 text-sm font-semibold transition ${
                                         tab === "register"
                                             ? "bg-[#4D8EFF] text-white shadow-sm"
                                             : "text-gray-400 hover:text-gray-200"
@@ -80,7 +80,7 @@ export default function AuthPage() {
                                 <button
                                     type="button"
                                     onClick={() => setTab("signin")}
-                                    className={`rounded-full px-5 py-1.5 text-sm font-semibold transition ${
+                                    className={`rounded-full cursor-pointer px-5 py-1.5 text-sm font-semibold transition ${
                                         tab === "signin"
                                             ? "bg-[#4D8EFF] text-white shadow-sm"
                                             : "text-gray-400 hover:text-gray-200"
@@ -92,7 +92,7 @@ export default function AuthPage() {
                         </div>
 
                         {/* Form — swaps based on active tab */}
-                        {tab === "register" ? <Signup /> : <Signin />}
+                        {tab === "register" ? <Signup onSwitchToSignin={() => setTab("signin")} /> : <Signin onSwitchToRegister={() => setTab("register")} />}
                     </div>
                 </div>
             </main>

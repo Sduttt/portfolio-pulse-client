@@ -1,23 +1,126 @@
 "use client";
 
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCalendar, faCity, faEye, faEyeSlash, faGlobe, faLock, faMailBulk, faSuitcase, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import Loader from "@/app/components/Loader";
 import InputField, { inputClass } from "./InputField";
+import { authApi } from "@/lib/api/auth";
 
-export default function Signup() {
-    const [gender, setGender] = useState<string>("");
+export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => void }) {
+    const [loading, setLoading] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [modal, setModal] = useState<{ success: boolean; message: string } | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        fullName: "",
+        profession: "",
+        email: "",
+        dateOfBirth: "",
+        password: "",
+        address: {
+            city: "",
+            country: "",
+        },
+        gender: "",
+        bio: "",
+    });
     const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
+    const avatarFile = useRef<File | null>(null);
     const fileRef = useRef<HTMLInputElement>(null);
 
     const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) setAvatarSrc(URL.createObjectURL(file));
+        if (file) {
+            avatarFile.current = file;
+            setAvatarSrc(URL.createObjectURL(file));
+        }
+    };
+
+    const submitForm = async () => {
+        setLoading(true);
+        setModal(null);
+
+        try {
+            const result = await authApi.register({
+                email: formData.email,
+                password: formData.password,
+                fullName: formData.fullName,
+                profession: formData.profession,
+                bio: formData.bio,
+                dateOfBirth: formData.dateOfBirth,
+                address: {
+                    city: formData.address.city,
+                    country: formData.address.country,
+                },
+                gender: formData.gender,
+                avatar: avatarFile.current ?? undefined,
+            }) as { success: boolean; message: string };
+            setModal({ success: true, message: result.message ?? "Registration successful!" });
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : "Something went wrong";
+            setModal({ success: false, message: msg });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        void submitForm();
     };
 
     return (
-        <form className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
+        <>
+            {/* Result Modal */}
+            {modal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm">
+                    <div className={`w-full max-w-sm rounded-2xl border p-8 shadow-2xl ${modal.success ? "border-green-500/30 bg-[#0d1f17]" : "border-red-500/30 bg-[#1f0d0d]"}`}>
+                        {/* Icon */}
+                        <div className={`mx-auto mb-5 flex size-14 items-center justify-center rounded-full ${modal.success ? "bg-green-500/15" : "bg-red-500/15"}`}>
+                            {modal.success ? (
+                                <svg className="size-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            ) : (
+                                <svg className="size-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            )}
+                        </div>
+                        {/* Title */}
+                        <h4 className={`font-hanken mb-2 text-center text-lg font-bold ${modal.success ? "text-green-400" : "text-red-400"}`}>
+                            {modal.success ? "Registration Successful" : "Registration Failed"}
+                        </h4>
+                        {/* Message */}
+                        <p className="mb-6 text-center text-sm leading-relaxed text-gray-300">
+                            {modal.message}
+                        </p>
+                        {/* Actions */}
+                        {modal.success ? (
+                            <button
+                                type="button"
+                                onClick={() => { setModal(null); onSwitchToSignin?.(); }}
+                                className="font-hanken w-full rounded-xl bg-green-500 py-3 text-sm font-bold text-white transition hover:bg-green-400 active:scale-[0.98]"
+                            >
+                                Go to Sign In
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => setModal(null)}
+                                className="font-hanken w-full rounded-xl bg-red-500/20 py-3 text-sm font-bold text-red-400 transition hover:bg-red-500/30 active:scale-[0.98]"
+                            >
+                                Try Again
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            <form className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
             {/* Avatar upload — full width */}
             <div className="col-span-1 mb-2 flex items-center gap-5 md:col-span-2">
                 <div className="relative shrink-0">
@@ -70,75 +173,60 @@ export default function Signup() {
             {/* Full Name */}
             <InputField
                 label="Full Name"
-                icon={
-                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
-                    </svg>
-                }
+                faicon={faUser}
             >
-                <input type="text" placeholder="Alex Sterling" className={inputClass} />
+                <input type="text" placeholder="Alex Sterling" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, fullName: e.target.value }))} />
             </InputField>
 
             {/* Profession */}
             <InputField
                 label="Profession"
-                icon={
-                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-8-2h4v2h-4V4zm8 16H4V8h16v12z" />
-                    </svg>
-                }
+                faicon={faSuitcase}
             >
-                <input type="text" placeholder="Software Engineer" className={inputClass} />
+                <input type="text" placeholder="Software Engineer" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, profession: e.target.value }))} />
                 
             </InputField>
 
             {/* Email */}
             <InputField
                 label="Email Address"
-                icon={
-                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
-                    </svg>
-                }
+                faicon={faMailBulk}
             >
-                <input type="email" placeholder="alex@portfolio-pulse.com" className={inputClass} />
+                <input type="email" placeholder="alex@portfolio-pulse.com" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, email: e.target.value }))} />
             </InputField>
 
             {/* Date of Birth */}
             <InputField
                 label="Date of Birth"
-                icon={
-                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z" />
-                    </svg>
-                }
+                faicon={faCalendar}
+                    
             >
-                <input type="date" className={inputClass} />
+                <input type="date" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, dateOfBirth: e.target.value }))} value={formData.dateOfBirth} />
             </InputField>
 
             {/* Password */}
-            <InputField
-                label="Password"
-                icon={
-                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z" />
-                    </svg>
-                }
-            >
-                <input type="password" placeholder="••••••••" className={inputClass} />
-            </InputField>
+            <div className="flex flex-col gap-2">
+                <label className="font-jetbrains text-xs font-semibold tracking-widest text-gray-400 uppercase">Password</label>
+                <div className="flex items-center rounded-lg border border-gray-700/40 bg-[#10131A] px-4 py-2 focus-within:border-[#A2BAF0] focus-within:ring-1 focus-within:ring-[#A2BAF0]">
+                    <FontAwesomeIcon icon={faLock} className="mr-3 shrink-0 text-gray-500" />
+                    <input type={showPassword ? "text" : "password"} placeholder="••••••••" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, password: e.target.value }))} />
+                    <button type="button" onClick={() => setShowPassword((v) => !v)} className="ml-2 shrink-0 text-gray-500 hover:text-gray-300">
+                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="size-4" />
+                    </button>
+                </div>
+            </div>
 
             {/* Re-enter Password */}
-            <InputField
-                label="Re-enter Password"
-                icon={
-                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z" />
-                    </svg>
-                }
-            >
-                <input type="password" placeholder="••••••••" className={inputClass} />
-            </InputField>
+            <div className="flex flex-col gap-2">
+                <label className="font-jetbrains text-xs font-semibold tracking-widest text-gray-400 uppercase">Re-enter Password</label>
+                <div className="flex items-center rounded-lg border border-gray-700/40 bg-[#10131A] px-4 py-2 focus-within:border-[#A2BAF0] focus-within:ring-1 focus-within:ring-[#A2BAF0]">
+                    <FontAwesomeIcon icon={faLock} className="mr-3 shrink-0 text-gray-500" />
+                    <input type={showConfirmPassword ? "text" : "password"} placeholder="••••••••" className={inputClass} onChange={e => setConfirmPassword(e.target.value)} />
+                    <button type="button" onClick={() => setShowConfirmPassword((v) => !v)} className="ml-2 shrink-0 text-gray-500 hover:text-gray-300">
+                        <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} className="size-4" />
+                    </button>
+                </div>
+            </div>
 
             {/* Gender — full width */}
             <div className="col-span-1 flex flex-col gap-2 md:col-span-2">
@@ -146,18 +234,18 @@ export default function Signup() {
                     Gender
                 </label>
                 <div className="flex gap-2">
-                    {["Male", "Female", "Other"].map((g) => (
+                    {["male", "female", "other"].map((g) => (
                         <button
                             key={g}
                             type="button"
-                            onClick={() => setGender(g)}
-                            className={`flex-1 rounded-lg border py-2 text-sm font-medium transition ${
-                                gender === g
+                            onClick={() => setFormData((prev) => ({ ...prev, gender: g }))}
+                            className={`flex-1 cursor-pointer rounded-lg border py-2 text-sm font-medium transition ${
+                                formData.gender === g
                                     ? "border-[#A2BAF0] bg-[#4D8EFF]/20 text-[#A2BAF0]"
                                     : "border-gray-700/40 bg-[#10131A] text-gray-500 hover:border-gray-500 hover:text-gray-300"
                             }`}
                         >
-                            {g}
+                            {g.charAt(0).toUpperCase() + g.slice(1)}
                         </button>
                     ))}
                 </div>
@@ -166,25 +254,17 @@ export default function Signup() {
             {/* City */}
             <InputField
                 label="City"
-                icon={
-                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
-                    </svg>
-                }
+                faicon={faCity}
             >
-                <input type="text" placeholder="London" className={inputClass} />
+                <input type="text" placeholder="London" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, address: { ...prev.address, city: e.target.value } }))} />
             </InputField>
 
             {/* Country */}
             <InputField
                 label="Country"
-                icon={
-                    <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-                    </svg>
-                }
+                faicon={faGlobe}
             >
-                <input type="text" placeholder="United Kingdom" className={inputClass} />
+                <input type="text" placeholder="United Kingdom" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, address: { ...prev.address, country: e.target.value } }))} />
             </InputField>
 
             {/* Bio — full width */}
@@ -204,18 +284,33 @@ export default function Signup() {
                         rows={3}
                         placeholder="Briefly describe your trading style and long-term goals..."
                         className="w-full resize-none bg-transparent text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none md:text-base"
+                        onChange={e => setFormData((prev) => ({ ...prev, bio: e.target.value }))}
                     />
                 </div>
             </div>
 
             {/* Submit */}
             <div className="col-span-1 mt-2 space-y-4 md:col-span-2">
+                {confirmPassword && formData.password !== confirmPassword && (
+                    <p className="text-sm text-red-400">Passwords do not match</p>
+                )}
                 <button
                     type="submit"
-                    className="font-hanken flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#A2BAF0] py-4 text-base font-bold text-[#001A42] shadow-lg shadow-[#A2BAF0]/20 transition hover:bg-[#A2BAF0]/90 active:scale-[0.98]"
+                    onClick={handleSubmit}
+                    disabled={
+                        loading ||
+                        !!(confirmPassword && formData.password !== confirmPassword)
+                    }
+                    className="font-hanken flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#A2BAF0] py-4 text-base font-bold text-[#001A42] shadow-lg shadow-[#A2BAF0]/20 transition hover:bg-[#A2BAF0]/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    Start Trading
-                    <FontAwesomeIcon icon={faArrowRight} className="size-4" />
+                    {loading ? (
+                        <Loader size="sm" color="border-[#001A42]" />
+                    ) : (
+                        <>
+                            Start Trading
+                            <FontAwesomeIcon icon={faArrowRight} className="size-4" />
+                        </>
+                    )}
                 </button>
                 <p className="text-center text-sm text-gray-400">
                     By registering, you agree to our{" "}
@@ -230,5 +325,6 @@ export default function Signup() {
                 </p>
             </div>
         </form>
+        </>
     );
 }
