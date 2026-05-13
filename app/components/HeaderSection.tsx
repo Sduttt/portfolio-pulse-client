@@ -62,7 +62,7 @@ export default function HeaderSection() {
     if (isExcluded) return null;
 
     return (
-        <header className="sticky top-0 py-10 z-40 flex items-center justify-between h-16 w-full px-4 md:px-10 bg-[#10131a]/80 backdrop-blur-md border-b border-white/10 shadow-sm">
+        <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-white/10 bg-[#10131a]/80 px-4 py-10 shadow-sm backdrop-blur-md md:px-10">
             {/* Logo */}
             <Link href="/" className="shrink-0">
                 <Image src="/Logo.png" alt="Portfolio Pulse" width={70} height={40} priority />
@@ -71,16 +71,18 @@ export default function HeaderSection() {
             {/* Profile */}
             <div className="relative flex items-center gap-3" ref={dropdownRef}>
                 {profile?.fullName && (
-                    <span className="hidden sm:block text-lg text-gray-300 font-semibold">
+                    <span className="hidden text-lg font-semibold text-gray-300 sm:block">
                         {profile.fullName
                             .split(" ")
-                            .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                            .map(
+                                (w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+                            )
                             .join(" ")}
                     </span>
                 )}
                 <button
                     onClick={() => setDropdownOpen((prev) => !prev)}
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/10 text-gray-300 hover:bg-white/20 transition-colors overflow-hidden"
+                    className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/10 text-gray-300 transition-colors hover:bg-white/20"
                     aria-label="Profile menu"
                 >
                     {profile?.avatar ? (
@@ -89,7 +91,7 @@ export default function HeaderSection() {
                             alt={profile.fullName ?? "Profile"}
                             width={40}
                             height={40}
-                            className="w-full h-full object-cover"
+                            className="h-full w-full object-cover"
                         />
                     ) : (
                         <FontAwesomeIcon icon={faUser} className="text-sm" />
@@ -97,10 +99,10 @@ export default function HeaderSection() {
                 </button>
 
                 {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-44 rounded-xl bg-[#1d2027] border border-white/10 shadow-lg overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-44 overflow-hidden rounded-xl border border-white/10 bg-[#1d2027] shadow-lg">
                         <Link
                             href="/profile"
-                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/10 transition-colors"
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 transition-colors hover:bg-white/10"
                             onClick={() => setDropdownOpen(false)}
                         >
                             <FontAwesomeIcon icon={faUser} className="text-xs text-blue-400" />
@@ -109,12 +111,15 @@ export default function HeaderSection() {
                         <button
                             onClick={signOut}
                             disabled={loadingSignout}
-                            className="cursor-pointer flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/10 transition-colors border-t border-white/10 disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="flex w-full cursor-pointer items-center gap-3 border-t border-white/10 px-4 py-3 text-sm text-gray-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {loadingSignout ? (
                                 <Loader size="sm" color="border-red-400" />
                             ) : (
-                                <FontAwesomeIcon icon={faRightFromBracket} className="text-xs text-red-400" />
+                                <FontAwesomeIcon
+                                    icon={faRightFromBracket}
+                                    className="text-xs text-red-400"
+                                />
                             )}
                             {loadingSignout ? "Signing out..." : "Sign Out"}
                         </button>

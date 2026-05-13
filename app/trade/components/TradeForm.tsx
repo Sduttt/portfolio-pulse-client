@@ -128,8 +128,10 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
         const e: Partial<Record<keyof TradeFormData, string>> = {};
         if (!form.assetName.trim()) e.assetName = "Asset name is required";
         if (!form.ticker.trim()) e.ticker = "Ticker is required";
-        if (form.quantity === "" || Number(form.quantity) <= 0) e.quantity = "Enter a valid quantity";
-        if (form.pricePerUnit === "" || Number(form.pricePerUnit) <= 0) e.pricePerUnit = "Enter a valid price";
+        if (form.quantity === "" || Number(form.quantity) <= 0)
+            e.quantity = "Enter a valid quantity";
+        if (form.pricePerUnit === "" || Number(form.pricePerUnit) <= 0)
+            e.pricePerUnit = "Enter a valid price";
         if (!form.tradeDate) e.tradeDate = "Trade date is required";
         setErrors(e);
         return Object.keys(e).length === 0;
@@ -157,26 +159,26 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
 
     return (
         <form onSubmit={handleSubmit} noValidate>
-            <div className="bg-[#1a1d27]/80 border border-white/8 rounded-2xl p-6 md:p-8">
+            <div className="rounded-2xl border border-white/8 bg-[#1a1d27]/80 p-6 md:p-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <p className="text-xs text-[#adc6ff] font-mono uppercase tracking-widest mb-1">
+                    <p className="mb-1 font-mono text-xs tracking-widest text-[#adc6ff] uppercase">
                         {mode === "add" ? "New Trade" : "Update Trade"}
                     </p>
                     <h1 className="text-2xl font-bold text-white">
                         {mode === "add" ? "Add a New Trade" : "Update Trade Details"}
                     </h1>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="mt-1 text-sm text-gray-500">
                         {mode === "add"
                             ? "Record a new buy or sell transaction in your portfolio."
                             : "Modify existing trade parameters. Changes reflect across all analytics."}
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {/* Asset Name */}
                     <div className="space-y-1.5">
-                        <label className="flex items-center gap-1.5 text-xs text-[#adc6ff] font-mono uppercase tracking-wider">
+                        <label className="flex items-center gap-1.5 font-mono text-xs tracking-wider text-[#adc6ff] uppercase">
                             <FontAwesomeIcon icon={faTag} className="text-[10px]" />
                             Asset Name
                         </label>
@@ -191,18 +193,25 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                                 autoComplete="off"
                             />
                             {searchLoading && suggestionsFor === "assetName" && (
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-500 animate-pulse">searching…</span>
+                                <span className="absolute top-1/2 right-3 -translate-y-1/2 animate-pulse text-[10px] text-gray-500">
+                                    searching…
+                                </span>
                             )}
                             {suggestionsFor === "assetName" && suggestions.length > 0 && (
-                                <SuggestionDropdown suggestions={suggestions} onSelect={selectSuggestion} />
+                                <SuggestionDropdown
+                                    suggestions={suggestions}
+                                    onSelect={selectSuggestion}
+                                />
                             )}
                         </div>
-                        {errors.assetName && <p className="text-xs text-[#ff5451]">{errors.assetName}</p>}
+                        {errors.assetName && (
+                            <p className="text-xs text-[#ff5451]">{errors.assetName}</p>
+                        )}
                     </div>
 
                     {/* Ticker */}
                     <div className="space-y-1.5">
-                        <label className="flex items-center gap-1.5 text-xs text-[#adc6ff] font-mono uppercase tracking-wider">
+                        <label className="flex items-center gap-1.5 font-mono text-xs tracking-wider text-[#adc6ff] uppercase">
                             <FontAwesomeIcon icon={faHashtag} className="text-[10px]" />
                             Ticker Symbol
                         </label>
@@ -217,25 +226,30 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                                 autoComplete="off"
                             />
                             {searchLoading && suggestionsFor === "ticker" && (
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-500 animate-pulse">searching…</span>
+                                <span className="absolute top-1/2 right-3 -translate-y-1/2 animate-pulse text-[10px] text-gray-500">
+                                    searching…
+                                </span>
                             )}
                             {suggestionsFor === "ticker" && suggestions.length > 0 && (
-                                <SuggestionDropdown suggestions={suggestions} onSelect={selectSuggestion} />
+                                <SuggestionDropdown
+                                    suggestions={suggestions}
+                                    onSelect={selectSuggestion}
+                                />
                             )}
                         </div>
                         {errors.ticker && <p className="text-xs text-[#ff5451]">{errors.ticker}</p>}
                     </div>
 
                     {/* Trade Type */}
-                    <div className="md:col-span-2 space-y-1.5">
-                        <label className="flex items-center gap-1.5 text-xs text-[#adc6ff] font-mono uppercase tracking-wider">
+                    <div className="space-y-1.5 md:col-span-2">
+                        <label className="flex items-center gap-1.5 font-mono text-xs tracking-wider text-[#adc6ff] uppercase">
                             Trade Type
                         </label>
-                        <div className="flex p-1 bg-[#0b0e15] border border-white/10 rounded-xl w-full max-w-xs">
+                        <div className="flex w-full max-w-xs rounded-xl border border-white/10 bg-[#0b0e15] p-1">
                             <button
                                 type="button"
                                 onClick={() => set("tradeType", "Buy")}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                                className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-all ${
                                     form.tradeType === "Buy"
                                         ? "bg-[#00a572]/20 text-[#4edea3] shadow-sm"
                                         : "text-gray-500 hover:text-gray-300"
@@ -247,7 +261,7 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                             <button
                                 type="button"
                                 onClick={() => set("tradeType", "Sell")}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                                className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-all ${
                                     form.tradeType === "Sell"
                                         ? "bg-[#ff5451]/20 text-[#ffb3ad] shadow-sm"
                                         : "text-gray-500 hover:text-gray-300"
@@ -261,7 +275,7 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
 
                     {/* Quantity */}
                     <div className="space-y-1.5">
-                        <label className="flex items-center gap-1.5 text-xs text-[#adc6ff] font-mono uppercase tracking-wider">
+                        <label className="flex items-center gap-1.5 font-mono text-xs tracking-wider text-[#adc6ff] uppercase">
                             <FontAwesomeIcon icon={faLayerGroup} className="text-[10px]" />
                             Quantity
                         </label>
@@ -272,17 +286,26 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                                 min="0"
                                 step="0.01"
                                 value={form.quantity}
-                                onChange={(e) => set("quantity", e.target.value === "" ? "" : Number(e.target.value))}
-                                className={`${inputClass} font-mono pr-16`}
+                                onChange={(e) =>
+                                    set(
+                                        "quantity",
+                                        e.target.value === "" ? "" : Number(e.target.value)
+                                    )
+                                }
+                                className={`${inputClass} pr-16 font-mono`}
                             />
-                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">UNITS</span>
+                            <span className="absolute top-1/2 right-4 -translate-y-1/2 font-mono text-xs text-gray-500">
+                                UNITS
+                            </span>
                         </div>
-                        {errors.quantity && <p className="text-xs text-[#ff5451]">{errors.quantity}</p>}
+                        {errors.quantity && (
+                            <p className="text-xs text-[#ff5451]">{errors.quantity}</p>
+                        )}
                     </div>
 
                     {/* Price per unit */}
                     <div className="space-y-1.5">
-                        <label className="flex items-center gap-1.5 text-xs text-[#adc6ff] font-mono uppercase tracking-wider">
+                        <label className="flex items-center gap-1.5 font-mono text-xs tracking-wider text-[#adc6ff] uppercase">
                             <FontAwesomeIcon icon={faCoins} className="text-[10px]" />
                             Price per Unit
                         </label>
@@ -291,10 +314,12 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                             <select
                                 value={form.currency}
                                 onChange={(e) => set("currency", e.target.value)}
-                                className="bg-[#0b0e15] border border-white/10 rounded-xl px-3 py-3 text-sm text-white font-mono focus:outline-none focus:ring-1 focus:ring-[#4d8eff]/50 cursor-pointer"
+                                className="cursor-pointer rounded-xl border border-white/10 bg-[#0b0e15] px-3 py-3 font-mono text-sm text-white focus:ring-1 focus:ring-[#4d8eff]/50 focus:outline-none"
                             >
                                 {CURRENCIES.map((c) => (
-                                    <option key={c} value={c}>{c}</option>
+                                    <option key={c} value={c}>
+                                        {c}
+                                    </option>
                                 ))}
                             </select>
                             <input
@@ -303,16 +328,23 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                                 min="0"
                                 step="0.01"
                                 value={form.pricePerUnit}
-                                onChange={(e) => set("pricePerUnit", e.target.value === "" ? "" : Number(e.target.value))}
-                                className={`${inputClass} font-mono flex-1`}
+                                onChange={(e) =>
+                                    set(
+                                        "pricePerUnit",
+                                        e.target.value === "" ? "" : Number(e.target.value)
+                                    )
+                                }
+                                className={`${inputClass} flex-1 font-mono`}
                             />
                         </div>
-                        {errors.pricePerUnit && <p className="text-xs text-[#ff5451]">{errors.pricePerUnit}</p>}
+                        {errors.pricePerUnit && (
+                            <p className="text-xs text-[#ff5451]">{errors.pricePerUnit}</p>
+                        )}
                     </div>
 
                     {/* Trade Date */}
                     <div className="space-y-1.5">
-                        <label className="flex items-center gap-1.5 text-xs text-[#adc6ff] font-mono uppercase tracking-wider">
+                        <label className="flex items-center gap-1.5 font-mono text-xs tracking-wider text-[#adc6ff] uppercase">
                             <FontAwesomeIcon icon={faCalendar} className="text-[10px]" />
                             Trade Date
                         </label>
@@ -322,25 +354,29 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                             onChange={(e) => set("tradeDate", e.target.value)}
                             className={`${inputClass} scheme-dark`}
                         />
-                        {errors.tradeDate && <p className="text-xs text-[#ff5451]">{errors.tradeDate}</p>}
+                        {errors.tradeDate && (
+                            <p className="text-xs text-[#ff5451]">{errors.tradeDate}</p>
+                        )}
                     </div>
 
                     {/* Total (computed, read-only) */}
                     <div className="space-y-1.5">
-                        <label className="text-xs text-gray-500 font-mono uppercase tracking-wider">
+                        <label className="font-mono text-xs tracking-wider text-gray-500 uppercase">
                             Estimated Total
                         </label>
-                        <div className="bg-white/3 border border-white/8 rounded-xl px-4 py-3 text-white font-mono font-semibold">
+                        <div className="rounded-xl border border-white/8 bg-white/3 px-4 py-3 font-mono font-semibold text-white">
                             {form.currency} {total}
                         </div>
                     </div>
 
                     {/* Reason */}
-                    <div className="md:col-span-2 space-y-1.5">
-                        <label className="flex items-center gap-1.5 text-xs text-[#adc6ff] font-mono uppercase tracking-wider">
+                    <div className="space-y-1.5 md:col-span-2">
+                        <label className="flex items-center gap-1.5 font-mono text-xs tracking-wider text-[#adc6ff] uppercase">
                             <FontAwesomeIcon icon={faBrain} className="text-[10px]" />
                             Trade Reason
-                            <span className="text-gray-600 normal-case tracking-normal font-sans ml-1">(optional)</span>
+                            <span className="ml-1 font-sans tracking-normal text-gray-600 normal-case">
+                                (optional)
+                            </span>
                         </label>
                         <textarea
                             rows={4}
@@ -353,11 +389,11 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                 </div>
 
                 {/* Actions */}
-                <div className="mt-8 pt-6 border-t border-white/8 flex flex-col sm:flex-row gap-3 justify-end">
+                <div className="mt-8 flex flex-col justify-end gap-3 border-t border-white/8 pt-6 sm:flex-row">
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 text-gray-400 hover:bg-white/10 text-sm transition-all border border-white/8 cursor-pointer"
+                        className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/8 bg-white/5 px-6 py-3 text-sm text-gray-400 transition-all hover:bg-white/10"
                     >
                         <FontAwesomeIcon icon={faXmark} className="text-xs" />
                         {mode === "add" ? "Cancel" : "Discard Changes"}
@@ -365,7 +401,7 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                     <button
                         type="submit"
                         disabled={submitting}
-                        className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-[#4d8eff] text-[#001a42] font-bold text-sm shadow-lg shadow-[#4d8eff]/20 hover:scale-105 active:scale-100 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#4d8eff] px-8 py-3 text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {submitting ? (
                             <Loader size="sm" color="border-[#001a42]" />
@@ -373,8 +409,12 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                             <FontAwesomeIcon icon={faFloppyDisk} />
                         )}
                         {submitting
-                            ? mode === "add" ? "Adding..." : "Saving..."
-                            : mode === "add" ? "Add Trade" : "Save Changes"}
+                            ? mode === "add"
+                                ? "Adding..."
+                                : "Saving..."
+                            : mode === "add"
+                              ? "Add Trade"
+                              : "Save Changes"}
                     </button>
                 </div>
             </div>
@@ -390,7 +430,7 @@ function SuggestionDropdown({
     onSelect: (s: Suggestion) => void;
 }) {
     return (
-        <ul className="absolute z-50 top-full mt-1 left-0 right-0 bg-[#1a1d27] border border-white/10 rounded-xl overflow-hidden shadow-2xl shadow-black/60 max-h-60 overflow-y-auto">
+        <ul className="absolute top-full right-0 left-0 z-50 mt-1 max-h-60 overflow-hidden overflow-y-auto rounded-xl border border-white/10 bg-[#1a1d27] shadow-2xl shadow-black/60">
             {suggestions.map((s) => (
                 <li key={s.symbol}>
                     <button
@@ -399,14 +439,16 @@ function SuggestionDropdown({
                             e.preventDefault();
                             onSelect(s);
                         }}
-                        className="w-full flex items-center justify-between gap-3 px-4 py-2.5 hover:bg-[#4d8eff]/10 transition-colors text-left group"
+                        className="group flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[#4d8eff]/10"
                     >
                         <div className="min-w-0">
-                            <p className="text-sm text-white font-medium truncate">{s.name}</p>
-                            <p className="text-xs text-gray-500 truncate">{s.exchangeFullName}</p>
+                            <p className="truncate text-sm font-medium text-white">{s.name}</p>
+                            <p className="truncate text-xs text-gray-500">{s.exchangeFullName}</p>
                         </div>
                         <div className="shrink-0 text-right">
-                            <p className="text-xs font-mono text-[#adc6ff] group-hover:text-[#4d8eff]">{s.symbol}</p>
+                            <p className="font-mono text-xs text-[#adc6ff] group-hover:text-[#4d8eff]">
+                                {s.symbol}
+                            </p>
                             <p className="text-[10px] text-gray-600">{s.currency}</p>
                         </div>
                     </button>

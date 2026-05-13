@@ -44,20 +44,20 @@ function PasswordField({
             <label className="font-jetbrains text-xs font-semibold tracking-widest text-gray-400 uppercase">
                 {label}
             </label>
-            <div className="flex items-center rounded-lg border border-gray-700/40 bg-[#10131A] px-4 py-2 focus-within:border-[#A2BAF0] focus-within:ring-1 focus-within:ring-[#A2BAF0] transition-colors">
+            <div className="flex items-center rounded-lg border border-gray-700/40 bg-[#10131A] px-4 py-2 transition-colors focus-within:border-[#A2BAF0] focus-within:ring-1 focus-within:ring-[#A2BAF0]">
                 <FontAwesomeIcon icon={faLock} className="mr-3 shrink-0 text-gray-500" />
                 <input
                     type={show ? "text" : "password"}
                     placeholder={placeholder}
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
-                    className="w-full bg-transparent text-gray-200 placeholder:text-gray-600 focus:outline-none text-sm scheme-dark"
+                    className="w-full bg-transparent text-sm text-gray-200 scheme-dark placeholder:text-gray-600 focus:outline-none"
                     required
                 />
                 <button
                     type="button"
                     onClick={onToggle}
-                    className="ml-2 shrink-0 text-gray-500 hover:text-gray-300 cursor-pointer"
+                    className="ml-2 shrink-0 cursor-pointer text-gray-500 hover:text-gray-300"
                 >
                     <FontAwesomeIcon icon={show ? faEyeSlash : faEye} className="size-4" />
                 </button>
@@ -91,53 +91,65 @@ function ResetPasswordContent() {
         try {
             await authApi.resetPassword(token!, password);
             setSuccess(true);
-            setTimeout(() => { window.location.href = "/auth"; }, 2500);
+            setTimeout(() => {
+                window.location.href = "/auth";
+            }, 2500);
         } catch (err: any) {
-            setError(err.response?.data?.message ?? "Failed to reset password. The link may have expired.");
+            setError(
+                err.response?.data?.message ??
+                    "Failed to reset password. The link may have expired."
+            );
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#10131a] flex flex-col items-center justify-center px-4">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-[#10131a] px-4">
             {/* Decorative glow */}
-            <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-120 h-120 rounded-full bg-[#4d8eff]/10 blur-3xl" />
+            <div className="pointer-events-none absolute top-1/3 left-1/2 h-120 w-120 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4d8eff]/10 blur-3xl" />
 
             <div className="relative w-full max-w-md">
                 {/* Logo */}
-                <div className="flex justify-center mb-8">
+                <div className="mb-8 flex justify-center">
                     <Image src="/Logo.png" alt="Portfolio Pulse" width={90} height={50} priority />
                 </div>
 
                 <div className="glass-panel rounded-2xl p-8 shadow-2xl">
                     {/* Missing token */}
                     {!token ? (
-                        <div className="flex flex-col items-center gap-6 text-center py-4">
-                            <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                                <FontAwesomeIcon icon={faCircleXmark} className="text-3xl text-red-400" />
+                        <div className="flex flex-col items-center gap-6 py-4 text-center">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-red-500/20 bg-red-500/10">
+                                <FontAwesomeIcon
+                                    icon={faCircleXmark}
+                                    className="text-3xl text-red-400"
+                                />
                             </div>
                             <div>
-                                <h1 className="font-hanken text-xl font-bold text-[#adc6ff]">Invalid Link</h1>
+                                <h1 className="font-hanken text-xl font-bold text-[#adc6ff]">
+                                    Invalid Link
+                                </h1>
                                 <p className="mt-1 text-sm text-gray-400">
                                     No reset token found. Please use the link from your email.
                                 </p>
                             </div>
-                            <Link
-                                href="/auth"
-                                className="text-sm text-[#A2BAF0] hover:underline"
-                            >
+                            <Link href="/auth" className="text-sm text-[#A2BAF0] hover:underline">
                                 Back to Sign In
                             </Link>
                         </div>
                     ) : success ? (
                         /* Success state */
-                        <div className="flex flex-col items-center gap-6 text-center py-4">
-                            <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                                <FontAwesomeIcon icon={faCircleCheck} className="text-3xl text-emerald-400" />
+                        <div className="flex flex-col items-center gap-6 py-4 text-center">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10">
+                                <FontAwesomeIcon
+                                    icon={faCircleCheck}
+                                    className="text-3xl text-emerald-400"
+                                />
                             </div>
                             <div>
-                                <h1 className="font-hanken text-xl font-bold text-[#adc6ff]">Password Reset!</h1>
+                                <h1 className="font-hanken text-xl font-bold text-[#adc6ff]">
+                                    Password Reset!
+                                </h1>
                                 <p className="mt-1 text-sm text-gray-400">
                                     Your password has been updated. Redirecting to sign in…
                                 </p>
@@ -147,7 +159,9 @@ function ResetPasswordContent() {
                         /* Form */
                         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                             <div>
-                                <h1 className="font-hanken text-xl font-bold text-white">Reset your password</h1>
+                                <h1 className="font-hanken text-xl font-bold text-white">
+                                    Reset your password
+                                </h1>
                                 <p className="mt-1 text-sm text-gray-400">
                                     Choose a strong new password for your account.
                                 </p>
@@ -163,7 +177,7 @@ function ResetPasswordContent() {
 
                             {/* Strength rules */}
                             {password.length > 0 && (
-                                <ul className="grid grid-cols-2 gap-1.5 -mt-2">
+                                <ul className="-mt-2 grid grid-cols-2 gap-1.5">
                                     {rules.map((r) => {
                                         const passed = r.test(password);
                                         return (
@@ -192,8 +206,12 @@ function ResetPasswordContent() {
 
                             {/* Match indicator */}
                             {confirm.length > 0 && (
-                                <p className={`-mt-2 text-xs flex items-center gap-1.5 ${passwordsMatch ? "text-emerald-400" : "text-red-400"}`}>
-                                    <FontAwesomeIcon icon={passwordsMatch ? faCircleCheck : faCircleXmark} />
+                                <p
+                                    className={`-mt-2 flex items-center gap-1.5 text-xs ${passwordsMatch ? "text-emerald-400" : "text-red-400"}`}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={passwordsMatch ? faCircleCheck : faCircleXmark}
+                                    />
                                     {passwordsMatch ? "Passwords match" : "Passwords do not match"}
                                 </p>
                             )}
@@ -214,7 +232,10 @@ function ResetPasswordContent() {
                                 ) : (
                                     <>
                                         Reset Password
-                                        <FontAwesomeIcon icon={faArrowRightToBracket} className="size-4" />
+                                        <FontAwesomeIcon
+                                            icon={faArrowRightToBracket}
+                                            className="size-4"
+                                        />
                                     </>
                                 )}
                             </button>
@@ -237,7 +258,7 @@ export default function ResetPasswordPage() {
     return (
         <Suspense
             fallback={
-                <div className="min-h-screen bg-[#10131a] flex items-center justify-center">
+                <div className="flex min-h-screen items-center justify-center bg-[#10131a]">
                     <Loader size="lg" color="border-[#4d8eff]" />
                 </div>
             }

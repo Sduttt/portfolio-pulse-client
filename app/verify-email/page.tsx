@@ -28,28 +28,31 @@ function VerifyEmailContent() {
             .then((res) => {
                 setMessage(res.data?.message ?? "Your email has been verified successfully.");
                 setStatus("success");
-                setTimeout(() => { window.location.href = "/dashboard"; }, 2000);
+                setTimeout(() => {
+                    window.location.href = "/dashboard";
+                }, 2000);
             })
             .catch((err) => {
                 setMessage(
-                    err.response?.data?.message ?? "The verification link is invalid or has expired."
+                    err.response?.data?.message ??
+                        "The verification link is invalid or has expired."
                 );
                 setStatus("error");
             });
     }, [token]);
 
     return (
-        <div className="min-h-screen bg-[#10131a] flex flex-col items-center justify-center px-4">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-[#10131a] px-4">
             {/* Decorative glow */}
-            <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-120 h-120 rounded-full bg-[#4d8eff]/10 blur-3xl" />
+            <div className="pointer-events-none absolute top-1/3 left-1/2 h-120 w-120 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4d8eff]/10 blur-3xl" />
 
             <div className="relative w-full max-w-md">
                 {/* Logo */}
-                <div className="flex justify-center mb-8">
+                <div className="mb-8 flex justify-center">
                     <Image src="/Logo.png" alt="Portfolio Pulse" width={90} height={50} priority />
                 </div>
 
-                <div className="glass-panel rounded-2xl p-8 flex flex-col items-center gap-6 text-center">
+                <div className="glass-panel flex flex-col items-center gap-6 rounded-2xl p-8 text-center">
                     {status === "loading" && (
                         <>
                             <Loader size="lg" color="border-[#4d8eff]" />
@@ -57,16 +60,14 @@ function VerifyEmailContent() {
                                 <h1 className="font-hanken text-xl font-bold text-[#adc6ff]">
                                     Verifying your email…
                                 </h1>
-                                <p className="mt-1 text-sm text-gray-400">
-                                    Please wait a moment.
-                                </p>
+                                <p className="mt-1 text-sm text-gray-400">Please wait a moment.</p>
                             </div>
                         </>
                     )}
 
                     {status === "success" && (
                         <>
-                            <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10">
                                 <FontAwesomeIcon
                                     icon={faCircleCheck}
                                     className="text-3xl text-emerald-400"
@@ -77,14 +78,16 @@ function VerifyEmailContent() {
                                     Email Verified
                                 </h1>
                                 <p className="mt-1 text-sm text-gray-400">{message}</p>
-                                <p className="mt-2 text-xs text-gray-500">Redirecting to dashboard…</p>
+                                <p className="mt-2 text-xs text-gray-500">
+                                    Redirecting to dashboard…
+                                </p>
                             </div>
                         </>
                     )}
 
                     {status === "error" && (
                         <>
-                            <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-red-500/20 bg-red-500/10">
                                 <FontAwesomeIcon
                                     icon={faCircleXmark}
                                     className="text-3xl text-red-400"
@@ -98,7 +101,7 @@ function VerifyEmailContent() {
                             </div>
                             <Link
                                 href="/auth"
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-[#4d8eff]/40 text-[#adc6ff] hover:bg-[#4d8eff]/10 text-sm transition-colors"
+                                className="flex items-center gap-2 rounded-xl border border-[#4d8eff]/40 px-6 py-2.5 text-sm text-[#adc6ff] transition-colors hover:bg-[#4d8eff]/10"
                             >
                                 Back to Sign In
                             </Link>
@@ -107,7 +110,7 @@ function VerifyEmailContent() {
 
                     {status === "missing" && (
                         <>
-                            <div className="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-yellow-500/20 bg-yellow-500/10">
                                 <FontAwesomeIcon
                                     icon={faCircleXmark}
                                     className="text-3xl text-yellow-400"
@@ -118,12 +121,13 @@ function VerifyEmailContent() {
                                     Invalid Link
                                 </h1>
                                 <p className="mt-1 text-sm text-gray-400">
-                                    No verification token found. Please use the link from your email.
+                                    No verification token found. Please use the link from your
+                                    email.
                                 </p>
                             </div>
                             <Link
                                 href="/auth"
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-[#4d8eff]/40 text-[#adc6ff] hover:bg-[#4d8eff]/10 text-sm transition-colors"
+                                className="flex items-center gap-2 rounded-xl border border-[#4d8eff]/40 px-6 py-2.5 text-sm text-[#adc6ff] transition-colors hover:bg-[#4d8eff]/10"
                             >
                                 Back to Sign In
                             </Link>
@@ -139,7 +143,7 @@ export default function VerifyEmailPage() {
     return (
         <Suspense
             fallback={
-                <div className="min-h-screen bg-[#10131a] flex items-center justify-center">
+                <div className="flex min-h-screen items-center justify-center bg-[#10131a]">
                     <Loader size="lg" color="border-[#4d8eff]" />
                 </div>
             }

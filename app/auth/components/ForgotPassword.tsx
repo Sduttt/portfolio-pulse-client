@@ -33,7 +33,7 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
             <button
                 type="button"
                 onClick={onBack}
-                className="flex w-fit items-center gap-2 text-sm text-gray-400 hover:text-[#A2BAF0] transition-colors cursor-pointer"
+                className="flex w-fit cursor-pointer items-center gap-2 text-sm text-gray-400 transition-colors hover:text-[#A2BAF0]"
             >
                 <FontAwesomeIcon icon={faArrowLeft} className="text-xs" />
                 Back to Sign In
@@ -42,21 +42,25 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
             {sent ? (
                 /* ── Success state ── */
                 <div className="flex flex-col items-center gap-4 py-6 text-center">
-                    <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                        <FontAwesomeIcon icon={faPaperPlane} className="text-2xl text-emerald-400" />
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10">
+                        <FontAwesomeIcon
+                            icon={faPaperPlane}
+                            className="text-2xl text-emerald-400"
+                        />
                     </div>
                     <div>
-                        <h4 className="font-hanken text-lg font-bold text-white">Check your inbox</h4>
+                        <h4 className="font-hanken text-lg font-bold text-white">
+                            Check your inbox
+                        </h4>
                         <p className="mt-1 text-sm text-gray-400">
-                            If an account exists for{" "}
-                            <span className="text-[#A2BAF0]">{email}</span>, a password reset
-                            link has been sent.
+                            If an account exists for <span className="text-[#A2BAF0]">{email}</span>
+                            , a password reset link has been sent.
                         </p>
                     </div>
                     <button
                         type="button"
                         onClick={onBack}
-                        className="mt-2 text-sm text-[#A2BAF0] hover:underline cursor-pointer"
+                        className="mt-2 cursor-pointer text-sm text-[#A2BAF0] hover:underline"
                     >
                         Return to Sign In
                     </button>
@@ -65,7 +69,9 @@ export default function ForgotPassword({ onBack }: { onBack: () => void }) {
                 /* ── Form state ── */
                 <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                     <div>
-                        <h4 className="font-hanken text-lg font-bold text-white">Forgot your password?</h4>
+                        <h4 className="font-hanken text-lg font-bold text-white">
+                            Forgot your password?
+                        </h4>
                         <p className="mt-1 text-sm text-gray-400">
                             Enter your email and we&apos;ll send you a reset link.
                         </p>

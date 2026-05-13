@@ -1,6 +1,11 @@
 "use client";
 import Loader from "@/app/components/Loader";
-import { faChartLine, faThumbsUp, faThumbsDown, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import {
+    faChartLine,
+    faThumbsUp,
+    faThumbsDown,
+    faPaperPlane,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ScoreRing from "./ScoreRing";
 import { Analysis } from "../types";
@@ -42,20 +47,25 @@ export default function AnalysisSection({
 
     if (!analysis) {
         return (
-            <div className="bg-[#1a1d27]/80 border border-white/8 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
-                <div className="w-14 h-14 rounded-full bg-[#4d8eff]/10 flex items-center justify-center">
-                    <FontAwesomeIcon icon={faChartLine} className="text-[#adc6ff] text-xl" />
+            <div className="flex flex-col items-center gap-4 rounded-2xl border border-white/8 bg-[#1a1d27]/80 p-8 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#4d8eff]/10">
+                    <FontAwesomeIcon icon={faChartLine} className="text-xl text-[#adc6ff]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white">No Analysis Yet</h3>
-                <p className="text-sm text-gray-500 max-w-sm">
-                    Run AI analysis on this trade to get a rationality score, sentiment, and actionable feedback.
+                <p className="max-w-sm text-sm text-gray-500">
+                    Run AI analysis on this trade to get a rationality score, sentiment, and
+                    actionable feedback.
                 </p>
                 <button
                     onClick={onRunAnalysis}
                     disabled={runningAnalysis}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4d8eff] text-[#001a42] font-bold text-sm shadow-lg shadow-[#4d8eff]/20 hover:scale-105 active:scale-100 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#4d8eff] px-6 py-3 text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    {runningAnalysis ? <Loader size="sm" color="border-[#001a42]" /> : <FontAwesomeIcon icon={faChartLine} />}
+                    {runningAnalysis ? (
+                        <Loader size="sm" color="border-[#001a42]" />
+                    ) : (
+                        <FontAwesomeIcon icon={faChartLine} />
+                    )}
                     {runningAnalysis ? "Analysing..." : "Analyse Trade"}
                 </button>
             </div>
@@ -63,45 +73,62 @@ export default function AnalysisSection({
     }
 
     return (
-        <div className="bg-[#1a1d27]/80 border border-white/8 rounded-2xl p-6 md:p-8">
-            <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-full bg-[#4d8eff]/20 flex items-center justify-center">
-                    <FontAwesomeIcon icon={faChartLine} className="text-[#adc6ff] text-sm" />
+        <div className="rounded-2xl border border-white/8 bg-[#1a1d27]/80 p-6 md:p-8">
+            <div className="mb-8 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4d8eff]/20">
+                    <FontAwesomeIcon icon={faChartLine} className="text-sm text-[#adc6ff]" />
                 </div>
                 <h2 className="text-xl font-bold text-white">AI Analysis</h2>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white/3 hover:bg-white/6 border border-transparent hover:border-white/10 rounded-xl p-6 flex flex-col items-center gap-3 transition-all">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-mono">Rationality Score</p>
+            <div className="mb-8 grid gap-6 md:grid-cols-2">
+                <div className="flex flex-col items-center gap-3 rounded-xl border border-transparent bg-white/3 p-6 transition-all hover:border-white/10 hover:bg-white/6">
+                    <p className="font-mono text-xs tracking-wider text-gray-500 uppercase">
+                        Rationality Score
+                    </p>
                     <ScoreRing score={analysis.rationalityScore} />
                     <p className="text-xs text-gray-400">
-                        {analysis.rationalityScore >= 70 ? "High Logic" : analysis.rationalityScore >= 40 ? "Moderate" : "Impulsive"}
+                        {analysis.rationalityScore >= 70
+                            ? "High Logic"
+                            : analysis.rationalityScore >= 40
+                              ? "Moderate"
+                              : "Impulsive"}
                     </p>
                 </div>
 
-                <div className="bg-white/3 hover:bg-white/6 border border-transparent hover:border-white/10 rounded-xl p-6 flex flex-col gap-2 transition-all">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-mono mb-2">AI Sentiment</p>
-                    <span className={`text-4xl font-bold tracking-tight ${sentimentColor(analysis.sentiment)}`}>
+                <div className="flex flex-col gap-2 rounded-xl border border-transparent bg-white/3 p-6 transition-all hover:border-white/10 hover:bg-white/6">
+                    <p className="mb-2 font-mono text-xs tracking-wider text-gray-500 uppercase">
+                        AI Sentiment
+                    </p>
+                    <span
+                        className={`text-4xl font-bold tracking-tight ${sentimentColor(analysis.sentiment)}`}
+                    >
                         {analysis.sentiment}
                     </span>
-                    <p className="text-xs text-gray-500 mt-auto">
-                        Analysed {new Date(analysis.createdAt ?? "").toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                    <p className="mt-auto text-xs text-gray-500">
+                        Analysed{" "}
+                        {new Date(analysis.createdAt ?? "").toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                        })}
                     </p>
                 </div>
             </div>
 
-            <div className="bg-white/3 hover:bg-white/6 border border-transparent hover:border-white/10 rounded-xl p-6 mb-8 transition-all">
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-mono mb-3">AI Feedback</p>
-                <p className="text-gray-300 leading-relaxed">{analysis.ai_feedback}</p>
+            <div className="mb-8 rounded-xl border border-transparent bg-white/3 p-6 transition-all hover:border-white/10 hover:bg-white/6">
+                <p className="mb-3 font-mono text-xs tracking-wider text-gray-500 uppercase">
+                    AI Feedback
+                </p>
+                <p className="leading-relaxed text-gray-300">{analysis.ai_feedback}</p>
             </div>
 
-            <div className="border-t border-white/8 pt-6 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/8 pt-6">
                 <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-400">Was this analysis helpful?</span>
                     <button
                         onClick={onLikeClick}
-                        className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                        className={`cursor-pointer rounded-lg p-2 transition-colors ${
                             analysis.users_response_to_ai === "Like"
                                 ? "bg-[#4edea3]/15 text-[#4edea3]"
                                 : "bg-white/5 text-gray-400 hover:bg-[#4edea3]/10 hover:text-[#4edea3]"
@@ -111,7 +138,7 @@ export default function AnalysisSection({
                     </button>
                     <button
                         onClick={onDislikeClick}
-                        className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                        className={`cursor-pointer rounded-lg p-2 transition-colors ${
                             analysis.users_response_to_ai === "Dislike"
                                 ? "bg-[#ff5451]/15 text-[#ff5451]"
                                 : "bg-white/5 text-gray-400 hover:bg-[#ff5451]/10 hover:text-[#ff5451]"
@@ -122,7 +149,7 @@ export default function AnalysisSection({
                 </div>
                 <button
                     onClick={onFeedbackClick}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-gray-300 hover:bg-white/10 text-sm transition-all cursor-pointer"
+                    className="flex cursor-pointer items-center gap-2 rounded-xl bg-white/5 px-4 py-2 text-sm text-gray-300 transition-all hover:bg-white/10"
                 >
                     <FontAwesomeIcon icon={faPaperPlane} className="text-xs" />
                     Leave Feedback

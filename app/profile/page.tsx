@@ -180,8 +180,10 @@ export default function ProfilePage() {
         }
     };
 
-    const set = (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-        setForm((prev) => ({ ...prev, [key]: e.target.value }));
+    const set =
+        (key: keyof FormState) =>
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+            setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
     const joinedDate = profile?.createdAt
         ? new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(
@@ -190,24 +192,28 @@ export default function ProfilePage() {
         : null;
 
     const dobDisplay = profile?.dob
-        ? new Intl.DateTimeFormat("en-US", { day: "numeric", month: "long", year: "numeric" }).format(
-              new Date(profile.dob)
-          )
+        ? new Intl.DateTimeFormat("en-US", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+          }).format(new Date(profile.dob))
         : null;
 
     if (!profile) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex min-h-[60vh] items-center justify-center">
                 <Loader size="lg" color="border-[#4d8eff]" />
             </div>
         );
     }
 
-    const locationStr = [profile.address?.city, profile.address?.country].filter(Boolean).join(", ");
+    const locationStr = [profile.address?.city, profile.address?.country]
+        .filter(Boolean)
+        .join(", ");
 
     return (
-        <div className="py-10 px-4 md:px-10 min-h-[80vh]">
-            <div className="max-w-4xl mx-auto space-y-6">
+        <div className="min-h-[80vh] px-4 py-10 md:px-10">
+            <div className="mx-auto max-w-4xl space-y-6">
                 {/* Banners */}
                 {error && (
                     <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
@@ -221,23 +227,26 @@ export default function ProfilePage() {
                 )}
 
                 {/* ── Hero card ── */}
-                <section className="glass-panel rounded-2xl p-6 md:p-8 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-80 h-80 bg-[#4d8eff]/8 rounded-full blur-3xl pointer-events-none" />
-                    <div className="relative flex flex-col md:flex-row items-center md:items-start gap-6">
+                <section className="glass-panel relative overflow-hidden rounded-2xl p-6 md:p-8">
+                    <div className="pointer-events-none absolute top-0 right-0 h-80 w-80 rounded-full bg-[#4d8eff]/8 blur-3xl" />
+                    <div className="relative flex flex-col items-center gap-6 md:flex-row md:items-start">
                         {/* Avatar */}
-                        <div className="relative shrink-0 group">
-                            <div className="w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-2 border-[#4d8eff]/30 shadow-2xl shadow-[#4d8eff]/10">
+                        <div className="group relative shrink-0">
+                            <div className="h-28 w-28 overflow-hidden rounded-full border-2 border-[#4d8eff]/30 shadow-2xl shadow-[#4d8eff]/10 md:h-36 md:w-36">
                                 {profile.avatar ? (
                                     <Image
                                         src={profile.avatar}
                                         alt={profile.fullName}
                                         width={144}
                                         height={144}
-                                        className="w-full h-full object-cover"
+                                        className="h-full w-full object-cover"
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-[#1d2027] flex items-center justify-center">
-                                        <FontAwesomeIcon icon={faUser} className="text-4xl text-[#4d8eff]/30" />
+                                    <div className="flex h-full w-full items-center justify-center bg-[#1d2027]">
+                                        <FontAwesomeIcon
+                                            icon={faUser}
+                                            className="text-4xl text-[#4d8eff]/30"
+                                        />
                                     </div>
                                 )}
                             </div>
@@ -245,13 +254,16 @@ export default function ProfilePage() {
                             <button
                                 onClick={() => avatarInputRef.current?.click()}
                                 disabled={avatarUploading}
-                                className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                                className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
                                 title="Change avatar"
                             >
                                 {avatarUploading ? (
                                     <Loader size="sm" color="border-white" />
                                 ) : (
-                                    <FontAwesomeIcon icon={faCamera} className="text-white text-xl drop-shadow" />
+                                    <FontAwesomeIcon
+                                        icon={faCamera}
+                                        className="text-xl text-white drop-shadow"
+                                    />
                                 )}
                             </button>
                             <input
@@ -264,9 +276,9 @@ export default function ProfilePage() {
                         </div>
 
                         {/* Name / profession / bio / tags */}
-                        <div className="flex-1 text-center md:text-left space-y-2 min-w-0">
+                        <div className="min-w-0 flex-1 space-y-2 text-center md:text-left">
                             <div>
-                                <h1 className="font-hanken text-2xl md:text-3xl font-bold text-[#adc6ff] leading-tight">
+                                <h1 className="font-hanken text-2xl leading-tight font-bold text-[#adc6ff] md:text-3xl">
                                     {profile.fullName}
                                 </h1>
                                 {profile.profession && (
@@ -276,20 +288,26 @@ export default function ProfilePage() {
                                 )}
                             </div>
                             {profile.bio && (
-                                <p className="text-gray-400 text-sm leading-relaxed max-w-lg">
+                                <p className="max-w-lg text-sm leading-relaxed text-gray-400">
                                     {profile.bio}
                                 </p>
                             )}
-                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-1">
+                            <div className="flex flex-wrap items-center justify-center gap-2 pt-1 md:justify-start">
                                 {locationStr && (
-                                    <span className="flex items-center gap-1.5 text-xs text-gray-400 bg-white/5 border border-white/10 rounded-full px-3 py-1">
-                                        <FontAwesomeIcon icon={faLocationDot} className="text-[10px] text-gray-500" />
+                                    <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-400">
+                                        <FontAwesomeIcon
+                                            icon={faLocationDot}
+                                            className="text-[10px] text-gray-500"
+                                        />
                                         {locationStr}
                                     </span>
                                 )}
                                 {joinedDate && (
-                                    <span className="flex items-center gap-1.5 text-xs text-gray-400 bg-white/5 border border-white/10 rounded-full px-3 py-1">
-                                        <FontAwesomeIcon icon={faCalendar} className="text-[10px] text-gray-500" />
+                                    <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-400">
+                                        <FontAwesomeIcon
+                                            icon={faCalendar}
+                                            className="text-[10px] text-gray-500"
+                                        />
                                         Joined {joinedDate}
                                     </span>
                                 )}
@@ -297,12 +315,12 @@ export default function ProfilePage() {
                         </div>
 
                         {/* Edit / Save / Cancel */}
-                        <div className="flex gap-2 shrink-0 self-start">
+                        <div className="flex shrink-0 gap-2 self-start">
                             {editing ? (
                                 <>
                                     <button
                                         onClick={cancelEdit}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-700/50 text-gray-400 hover:text-gray-200 hover:border-gray-600 text-sm transition-colors cursor-pointer"
+                                        className="flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700/50 px-4 py-2 text-sm text-gray-400 transition-colors hover:border-gray-600 hover:text-gray-200"
                                     >
                                         <FontAwesomeIcon icon={faXmark} />
                                         Cancel
@@ -310,7 +328,7 @@ export default function ProfilePage() {
                                     <button
                                         onClick={saveEdit}
                                         disabled={saving}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4d8eff] text-[#001a42] font-bold text-sm shadow-lg shadow-[#4d8eff]/20 hover:scale-105 active:scale-100 transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                                        className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#4d8eff] px-4 py-2 text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
                                         {saving ? (
                                             <Loader size="sm" color="border-[#001a42]" />
@@ -323,7 +341,7 @@ export default function ProfilePage() {
                             ) : (
                                 <button
                                     onClick={startEdit}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#4d8eff]/40 text-[#adc6ff] hover:bg-[#4d8eff]/10 text-sm transition-colors cursor-pointer"
+                                    className="flex cursor-pointer items-center gap-2 rounded-xl border border-[#4d8eff]/40 px-4 py-2 text-sm text-[#adc6ff] transition-colors hover:bg-[#4d8eff]/10"
                                 >
                                     <FontAwesomeIcon icon={faPen} className="text-xs" />
                                     Edit Profile
@@ -334,19 +352,19 @@ export default function ProfilePage() {
                 </section>
 
                 {/* ── Details card ── */}
-                <section className="glass-panel rounded-2xl p-6 md:p-8 space-y-6">
+                <section className="glass-panel space-y-6 rounded-2xl p-6 md:p-8">
                     <div className="flex items-center justify-between">
                         <h2 className="font-jetbrains text-[10px] font-semibold tracking-widest text-gray-400 uppercase">
                             Personal Details
                         </h2>
                         {editing && (
-                            <span className="text-[10px] font-jetbrains text-[#4d8eff]/70 tracking-wider">
+                            <span className="font-jetbrains text-[10px] tracking-wider text-[#4d8eff]/70">
                                 Editing
                             </span>
                         )}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         {/* Full Name */}
                         <Field
                             label="Full Name"
@@ -354,7 +372,10 @@ export default function ProfilePage() {
                             view={profile.fullName || <span className="text-gray-600">—</span>}
                             edit={
                                 <div className={fieldWrap}>
-                                    <FontAwesomeIcon icon={faUser} className="mr-3 shrink-0 text-gray-500 text-xs" />
+                                    <FontAwesomeIcon
+                                        icon={faUser}
+                                        className="mr-3 shrink-0 text-xs text-gray-500"
+                                    />
                                     <input
                                         type="text"
                                         value={form.fullName}
@@ -373,7 +394,7 @@ export default function ProfilePage() {
                             </label>
                             <div className="flex items-center gap-2 px-1">
                                 <span className="text-sm text-gray-200">{profile.email}</span>
-                                <span className="text-[9px] font-jetbrains text-gray-600 border border-gray-700/40 rounded-full px-2 py-0.5 shrink-0">
+                                <span className="font-jetbrains shrink-0 rounded-full border border-gray-700/40 px-2 py-0.5 text-[9px] text-gray-600">
                                     read-only
                                 </span>
                             </div>
@@ -386,7 +407,10 @@ export default function ProfilePage() {
                             view={profile.profession || <span className="text-gray-600">—</span>}
                             edit={
                                 <div className={fieldWrap}>
-                                    <FontAwesomeIcon icon={faBriefcase} className="mr-3 shrink-0 text-gray-500 text-xs" />
+                                    <FontAwesomeIcon
+                                        icon={faBriefcase}
+                                        className="mr-3 shrink-0 text-xs text-gray-500"
+                                    />
                                     <input
                                         type="text"
                                         value={form.profession}
@@ -411,13 +435,18 @@ export default function ProfilePage() {
                             }
                             edit={
                                 <div className={fieldWrap}>
-                                    <FontAwesomeIcon icon={faVenusMars} className="mr-3 shrink-0 text-gray-500 text-xs" />
+                                    <FontAwesomeIcon
+                                        icon={faVenusMars}
+                                        className="mr-3 shrink-0 text-xs text-gray-500"
+                                    />
                                     <select
                                         value={form.gender}
                                         onChange={set("gender")}
                                         className={`${inputClass} [&>option]:bg-[#10131A]`}
                                     >
-                                        <option value="" disabled>Select gender</option>
+                                        <option value="" disabled>
+                                            Select gender
+                                        </option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
                                         <option value="other">Other</option>
@@ -433,12 +462,19 @@ export default function ProfilePage() {
                             view={dobDisplay ?? <span className="text-gray-600">—</span>}
                             edit={
                                 <div className={fieldWrap}>
-                                    <FontAwesomeIcon icon={faCalendar} className="mr-3 shrink-0 text-gray-500 text-xs" />
+                                    <FontAwesomeIcon
+                                        icon={faCalendar}
+                                        className="mr-3 shrink-0 text-xs text-gray-500"
+                                    />
                                     <input
                                         type="date"
                                         value={form.dob}
                                         onChange={set("dob")}
-                                        max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 18); return d.toISOString().slice(0, 10); })()}
+                                        max={(() => {
+                                            const d = new Date();
+                                            d.setFullYear(d.getFullYear() - 18);
+                                            return d.toISOString().slice(0, 10);
+                                        })()}
                                         className={inputClass}
                                     />
                                 </div>
@@ -452,7 +488,10 @@ export default function ProfilePage() {
                             view={profile.address?.city || <span className="text-gray-600">—</span>}
                             edit={
                                 <div className={fieldWrap}>
-                                    <FontAwesomeIcon icon={faLocationDot} className="mr-3 shrink-0 text-gray-500 text-xs" />
+                                    <FontAwesomeIcon
+                                        icon={faLocationDot}
+                                        className="mr-3 shrink-0 text-xs text-gray-500"
+                                    />
                                     <input
                                         type="text"
                                         value={form.city}
@@ -468,10 +507,15 @@ export default function ProfilePage() {
                         <Field
                             label="Country"
                             editing={editing}
-                            view={profile.address?.country || <span className="text-gray-600">—</span>}
+                            view={
+                                profile.address?.country || <span className="text-gray-600">—</span>
+                            }
                             edit={
                                 <div className={fieldWrap}>
-                                    <FontAwesomeIcon icon={faLocationDot} className="mr-3 shrink-0 text-gray-500 text-xs" />
+                                    <FontAwesomeIcon
+                                        icon={faLocationDot}
+                                        className="mr-3 shrink-0 text-xs text-gray-500"
+                                    />
                                     <input
                                         type="text"
                                         value={form.country}
@@ -500,7 +544,7 @@ export default function ProfilePage() {
                                     value={form.bio}
                                     onChange={set("bio")}
                                     rows={4}
-                                    className="w-full rounded-lg border border-gray-700/40 bg-[#10131A] px-4 py-3 text-gray-200 placeholder:text-gray-600 text-sm resize-none focus:outline-none focus:border-[#A2BAF0] focus:ring-1 focus:ring-[#A2BAF0] transition-colors scheme-dark"
+                                    className="w-full resize-none rounded-lg border border-gray-700/40 bg-[#10131A] px-4 py-3 text-sm text-gray-200 scheme-dark transition-colors placeholder:text-gray-600 focus:border-[#A2BAF0] focus:ring-1 focus:ring-[#A2BAF0] focus:outline-none"
                                     placeholder="Tell others about yourself..."
                                 />
                             }

@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Add any route prefix here that requires the user to be logged in
-const PROTECTED_PREFIXES = [
-    "/dashboard",
-    "/portfolio",
-    "/profile",
-    "/trade",
-    "/analysis",
-];
+const PROTECTED_PREFIXES = ["/dashboard", "/portfolio", "/profile", "/trade", "/analysis"];
 
 // Logged-in users visiting these are bounced to /dashboard
 const AUTH_ROUTES = ["/auth", "/"];

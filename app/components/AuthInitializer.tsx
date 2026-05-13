@@ -23,4 +23,3 @@ export default function AuthInitializer() {
 
     return <EmailVerificationModal email={unverifiedEmail} />;
 }
-

@@ -47,11 +47,9 @@ export const authApi = {
         address?: { city: string; country: string };
     }) => apiClient.patch("/user/profile", data),
 
-    verifyEmail: (token: string) =>
-        apiClient.get("/user/verify-email", { params: { token } }),
+    verifyEmail: (token: string) => apiClient.get("/user/verify-email", { params: { token } }),
 
-    forgotPassword: (email: string) =>
-        apiClient.post("/user/forgot-password", { email }),
+    forgotPassword: (email: string) => apiClient.post("/user/forgot-password", { email }),
 
     sendVerificationEmail: (email: string) =>
         apiClient.post("/user/send-verification-email", { email }),

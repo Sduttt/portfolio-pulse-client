@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const FMP_API_KEY = process.env.NEXT_PUBLIC_FMP_API_KEY
+const FMP_API_KEY = process.env.NEXT_PUBLIC_FMP_API_KEY;
 
 export async function GET(req: NextRequest) {
     const query = req.nextUrl.searchParams.get("query");

@@ -14,15 +14,17 @@ type Props = {
 
 export default function TradeFormModal({ mode, initialData, onSubmit, onClose }: Props) {
     const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true); }, []);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
     if (!mounted) return null;
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/70 backdrop-blur-sm px-4 py-8 overflow-y-auto">
-            <div className="w-full max-w-3xl relative">
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-black/70 px-4 py-8 backdrop-blur-sm">
+            <div className="relative w-full max-w-3xl">
                 <button
                     onClick={onClose}
-                    className="absolute -top-4 right-0 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-gray-400 hover:text-white transition-all cursor-pointer z-10"
+                    className="absolute -top-4 right-0 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/10 text-gray-400 transition-all hover:bg-white/20 hover:text-white"
                 >
                     <FontAwesomeIcon icon={faXmark} />
                 </button>

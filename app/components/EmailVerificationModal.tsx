@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelopeCircleCheck, faPaperPlane, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import {
+    faEnvelopeCircleCheck,
+    faPaperPlane,
+    faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
 import { authApi } from "@/lib/api/auth";
 import Loader from "./Loader";
 
@@ -37,11 +41,14 @@ export default function EmailVerificationModal({ email }: { email: string }) {
 
     return (
         /* Backdrop — pointer events blocked, no close on click */
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-            <div className="glass-panel w-full max-w-md rounded-2xl p-8 flex flex-col items-center gap-6 text-center shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
+            <div className="glass-panel flex w-full max-w-md flex-col items-center gap-6 rounded-2xl p-8 text-center shadow-2xl">
                 {/* Icon */}
-                <div className="w-16 h-16 rounded-full bg-[#4d8eff]/10 border border-[#4d8eff]/20 flex items-center justify-center">
-                    <FontAwesomeIcon icon={faEnvelopeCircleCheck} className="text-3xl text-[#adc6ff]" />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#4d8eff]/20 bg-[#4d8eff]/10">
+                    <FontAwesomeIcon
+                        icon={faEnvelopeCircleCheck}
+                        className="text-3xl text-[#adc6ff]"
+                    />
                 </div>
 
                 {/* Heading */}
@@ -49,10 +56,10 @@ export default function EmailVerificationModal({ email }: { email: string }) {
                     <h2 className="font-hanken text-xl font-bold text-[#adc6ff]">
                         Verify your email
                     </h2>
-                    <p className="mt-2 text-sm text-gray-400 leading-relaxed">
+                    <p className="mt-2 text-sm leading-relaxed text-gray-400">
                         Your account is not yet verified. Please verify{" "}
-                        <span className="text-[#A2BAF0]">{email}</span> to continue using
-                        Portfolio Pulse.
+                        <span className="text-[#A2BAF0]">{email}</span> to continue using Portfolio
+                        Pulse.
                     </p>
                 </div>
 
@@ -66,13 +73,13 @@ export default function EmailVerificationModal({ email }: { email: string }) {
                 {sent ? (
                     /* Success state */
                     <div className="flex flex-col items-center gap-3">
-                        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400 w-full">
+                        <div className="w-full rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
                             Verification email sent! Check your inbox and click the link.
                         </div>
                         <button
                             onClick={sendEmail}
                             disabled={loading}
-                            className="text-sm text-gray-500 hover:text-[#A2BAF0] transition-colors cursor-pointer"
+                            className="cursor-pointer text-sm text-gray-500 transition-colors hover:text-[#A2BAF0]"
                         >
                             Resend email
                         </button>
@@ -82,7 +89,7 @@ export default function EmailVerificationModal({ email }: { email: string }) {
                     <button
                         onClick={sendEmail}
                         disabled={loading}
-                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#4d8eff] py-3.5 font-hanken font-bold text-sm text-[#001a42] shadow-lg shadow-[#4d8eff]/20 hover:bg-[#4d8eff]/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                        className="font-hanken flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#4d8eff] py-3.5 text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:bg-[#4d8eff]/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {loading ? (
                             <Loader size="sm" color="border-[#001a42]" />
@@ -99,7 +106,7 @@ export default function EmailVerificationModal({ email }: { email: string }) {
                 <button
                     onClick={signOut}
                     disabled={signingOut}
-                    className="flex items-center gap-2 text-xs text-gray-600 hover:text-red-400 transition-colors cursor-pointer disabled:opacity-50"
+                    className="flex cursor-pointer items-center gap-2 text-xs text-gray-600 transition-colors hover:text-red-400 disabled:opacity-50"
                 >
                     {signingOut ? (
                         <Loader size="sm" color="border-red-400" />

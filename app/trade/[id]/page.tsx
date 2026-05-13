@@ -26,7 +26,9 @@ export default function TradePage() {
     const [runningAnalysis, setRunningAnalysis] = useState(false);
 
     const [feedbackModal, setFeedbackModal] = useState(false);
-    const [feedbackResponse, setFeedbackResponse] = useState<"Like" | "Dislike" | "Neutral">("Neutral");
+    const [feedbackResponse, setFeedbackResponse] = useState<"Like" | "Dislike" | "Neutral">(
+        "Neutral"
+    );
     const [feedbackText, setFeedbackText] = useState("");
     const [submittingFeedback, setSubmittingFeedback] = useState(false);
     const [toast, setToast] = useState<string | null>(null);
@@ -123,28 +125,35 @@ export default function TradePage() {
     };
 
     return (
-        <div className="min-h-[80vh] py-10 px-4 md:px-10 max-w-5xl mx-auto">
+        <div className="mx-auto min-h-[80vh] max-w-5xl px-4 py-10 md:px-10">
             {toast && (
-                <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-xl bg-[#1d2027] border border-white/10 shadow-2xl text-sm text-white">
-                    <FontAwesomeIcon icon={faPaperPlane} className="text-[#4d8eff] text-xs" />
+                <div className="fixed right-6 bottom-6 z-50 flex items-center gap-3 rounded-xl border border-white/10 bg-[#1d2027] px-5 py-3 text-sm text-white shadow-2xl">
+                    <FontAwesomeIcon icon={faPaperPlane} className="text-xs text-[#4d8eff]" />
                     {toast}
                 </div>
             )}
 
             <button
                 onClick={() => router.push("/dashboard")}
-                className="flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-8 transition-colors cursor-pointer"
+                className="mb-8 flex cursor-pointer items-center gap-2 text-sm text-gray-400 transition-colors hover:text-white"
             >
                 <FontAwesomeIcon icon={faArrowLeft} />
                 Back to Dashboard
             </button>
 
             {tradeLoading ? (
-                <div className="flex justify-center py-16"><Loader size="lg" color="border-[#4d8eff]" /></div>
+                <div className="flex justify-center py-16">
+                    <Loader size="lg" color="border-[#4d8eff]" />
+                </div>
             ) : trade ? (
-                <TradeCard trade={trade} tradeId={tradeId} onDeleteClick={() => setDeleteModal(true)} onEditClick={() => setEditModal(true)} />
+                <TradeCard
+                    trade={trade}
+                    tradeId={tradeId}
+                    onDeleteClick={() => setDeleteModal(true)}
+                    onEditClick={() => setEditModal(true)}
+                />
             ) : (
-                <p className="text-gray-500 mb-6">Trade not found.</p>
+                <p className="mb-6 text-gray-500">Trade not found.</p>
             )}
 
             <AnalysisSection
@@ -152,9 +161,18 @@ export default function TradePage() {
                 analysisLoading={analysisLoading}
                 runningAnalysis={runningAnalysis}
                 onRunAnalysis={handleRunAnalysis}
-                onLikeClick={() => { setFeedbackResponse("Like"); setFeedbackModal(true); }}
-                onDislikeClick={() => { setFeedbackResponse("Dislike"); setFeedbackModal(true); }}
-                onFeedbackClick={() => { setFeedbackResponse("Neutral"); setFeedbackModal(true); }}
+                onLikeClick={() => {
+                    setFeedbackResponse("Like");
+                    setFeedbackModal(true);
+                }}
+                onDislikeClick={() => {
+                    setFeedbackResponse("Dislike");
+                    setFeedbackModal(true);
+                }}
+                onFeedbackClick={() => {
+                    setFeedbackResponse("Neutral");
+                    setFeedbackModal(true);
+                }}
             />
 
             {feedbackModal && (

@@ -39,12 +39,24 @@ export default function AuthPage() {
 
                     <div className="flex flex-col gap-3">
                         {[
-                            { icon: faShieldHalved, color: "#10B981", text: "End-to-end encrypted" },
-                            { icon: faBoltLightning, color: "#A2BAF0", text: "Real-time AI analysis" },
+                            {
+                                icon: faShieldHalved,
+                                color: "#10B981",
+                                text: "End-to-end encrypted",
+                            },
+                            {
+                                icon: faBoltLightning,
+                                color: "#A2BAF0",
+                                text: "Real-time AI analysis",
+                            },
                             { icon: faCheckCircle, color: "#10B981", text: "Cancel anytime" },
                         ].map(({ icon, color, text }) => (
                             <div key={text} className="flex items-center gap-3">
-                                <FontAwesomeIcon icon={icon} className="size-4 shrink-0" style={{ color }} />
+                                <FontAwesomeIcon
+                                    icon={icon}
+                                    className="size-4 shrink-0"
+                                    style={{ color }}
+                                />
                                 <p className="text-sm text-gray-400">{text}</p>
                             </div>
                         ))}
@@ -70,7 +82,7 @@ export default function AuthPage() {
                                 <button
                                     type="button"
                                     onClick={() => setTab("register")}
-                                    className={`rounded-full cursor-pointer px-5 py-1.5 text-sm font-semibold transition ${
+                                    className={`cursor-pointer rounded-full px-5 py-1.5 text-sm font-semibold transition ${
                                         tab === "register"
                                             ? "bg-[#4D8EFF] text-white shadow-sm"
                                             : "text-gray-400 hover:text-gray-200"
@@ -81,7 +93,7 @@ export default function AuthPage() {
                                 <button
                                     type="button"
                                     onClick={() => setTab("signin")}
-                                    className={`rounded-full cursor-pointer px-5 py-1.5 text-sm font-semibold transition ${
+                                    className={`cursor-pointer rounded-full px-5 py-1.5 text-sm font-semibold transition ${
                                         tab === "signin"
                                             ? "bg-[#4D8EFF] text-white shadow-sm"
                                             : "text-gray-400 hover:text-gray-200"
@@ -98,7 +110,10 @@ export default function AuthPage() {
                         ) : tab === "forgot-password" ? (
                             <ForgotPassword onBack={() => setTab("signin")} />
                         ) : (
-                            <Signin onSwitchToRegister={() => setTab("register")} onForgotPassword={() => setTab("forgot-password")} />
+                            <Signin
+                                onSwitchToRegister={() => setTab("register")}
+                                onForgotPassword={() => setTab("forgot-password")}
+                            />
                         )}
                     </div>
                 </div>

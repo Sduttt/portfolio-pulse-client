@@ -35,7 +35,10 @@ const Hero = (props: Props) => {
                 </p>
 
                 <div className="mt-2 md:flex">
-                    <Link href="/auth" className="font-hanken mt-4 mr-4 flex w-full cursor-pointer items-center justify-center rounded-lg bg-[#A2BAF0] px-5 py-2 text-base font-bold text-[#10131A] transition hover:bg-[#A2BAF0]/90 md:w-fit lg:px-8 lg:py-4 lg:text-xl">
+                    <Link
+                        href="/auth"
+                        className="font-hanken mt-4 mr-4 flex w-full cursor-pointer items-center justify-center rounded-lg bg-[#A2BAF0] px-5 py-2 text-base font-bold text-[#10131A] transition hover:bg-[#A2BAF0]/90 md:w-fit lg:px-8 lg:py-4 lg:text-xl"
+                    >
                         Get Started{" "}
                         <FontAwesomeIcon icon={faArrowRight} className="ml-2 size-4 md:hidden" />
                     </Link>

@@ -8,7 +8,9 @@ const EXCLUDED_PATHS: string[] = ["/auth"];
 
 export default function ConditionalFooter() {
     const pathname = usePathname();
-    const isExcluded = EXCLUDED_PATHS.some((path) => pathname === path || pathname.startsWith(path + "/"));
+    const isExcluded = EXCLUDED_PATHS.some(
+        (path) => pathname === path || pathname.startsWith(path + "/")
+    );
 
     if (isExcluded) return null;
 
