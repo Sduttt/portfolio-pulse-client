@@ -30,5 +30,5 @@ export const authApi = {
 
     logout: () => apiClient.post("/user/logout", {}),
 
-    getProfile: () => apiClient.get("/user/me"),
+    getProfile: () => apiClient.get("/user/profile"),
 };

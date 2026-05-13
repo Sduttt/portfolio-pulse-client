@@ -12,22 +12,28 @@ export default function Signin({ onSwitchToRegister }: { onSwitchToRegister?: ()
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingProfile, setLoadingProfile] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const signIn = async () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await authApi.login({ email, password }) as {
-                data: { accessToken: string };
-            };
-            localStorage.setItem("token", res.data.accessToken);
-            window.location.href = "/dashboard";
-        } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : "Login failed";
-            setError(msg);
+            const res: any = await authApi.login({ email, password });
+            if (res.status === 200) {
+                setLoading(false);
+                setLoadingProfile(true);
+                const profileRes = await authApi.getProfile();
+                localStorage.setItem("profile", JSON.stringify(profileRes.data));
+                window.location.href = "/dashboard"; // full reload so header reads localStorage fresh
+            } else {
+                setError(res.message);
+            }
+        } catch (err: any) {
+            setError(err.response?.data?.message || "An error occurred. Please try again.");
         } finally {
             setLoading(false);
+            setLoadingProfile(false);
         }
     };
 
@@ -37,7 +43,14 @@ export default function Signin({ onSwitchToRegister }: { onSwitchToRegister?: ()
     };
 
     return (
-        <form className="flex flex-col gap-5" onSubmit={handleSignIn}>
+        <>
+            {loadingProfile && (
+                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#10131a]/90 backdrop-blur-sm">
+                    <Loader size="lg" color="border-[#A2BAF0]" />
+                    <p className="text-sm text-gray-400">Setting up your account...</p>
+                </div>
+            )}
+            <form className="flex flex-col gap-5" onSubmit={handleSignIn}>
             {/* Email */}
             <InputField
                 label="Email Address"
@@ -105,6 +118,7 @@ export default function Signin({ onSwitchToRegister }: { onSwitchToRegister?: ()
                     </button>
                 </p>
             </div>
-        </form>
+            </form>
+        </>
     );
 }

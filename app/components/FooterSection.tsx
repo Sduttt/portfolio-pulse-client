@@ -4,7 +4,7 @@ type Props = {};
 
 const FooterSection = (props: Props) => {
     return (
-        <div className="bg-[#0B0E15] px-6 py-8 lg:px-24">
+        <div className="bg-[#0B0E15] px-6 py-4 lg:px-24">
             <div className="flex flex-col items-center gap-6 md:flex-row md:justify-between">
                 {/* Logo */}
                 <div className="shrink-0">

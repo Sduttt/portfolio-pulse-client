@@ -8,7 +8,7 @@ import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 
 export default function AuthPage() {
-    const [tab, setTab] = useState<"register" | "signin">("register");
+    const [tab, setTab] = useState<"register" | "signin">("signin");
 
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-[#10131A] px-4 py-16">

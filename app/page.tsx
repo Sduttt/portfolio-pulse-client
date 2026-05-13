@@ -1,4 +1,3 @@
-import FooterSection from "./components/FooterSection";
 import GetStarted from "./components/GetStarted";
 import Hero from "./components/Hero";
 import MainSectionOne from "./components/MainSectionOne";
@@ -11,7 +10,6 @@ export default function Home() {
             <MainSectionOne />
             <GetStarted />
             <PricingSection />
-            <FooterSection />
         </>
     );
 }

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Hanken_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import ConditionalFooter from "./components/ConditionalFooter";
+import HeaderSection from "./components/HeaderSection";
+import AuthInitializer from "./components/AuthInitializer";
 
 const hankenGrotsek = Hanken_Grotesk({
     variable: "--font-hanken-grotesk",
@@ -33,7 +36,10 @@ export default function RootLayout({
             className={`${hankenGrotsek.variable} ${inter.variable} ${jetBrainsMono.variable} h-full antialiased`}
         >
             <body className="flex min-h-full flex-col" suppressHydrationWarning>
+                <AuthInitializer />
+                <HeaderSection />
                 {children}
+                <ConditionalFooter />
             </body>
         </html>
     );
