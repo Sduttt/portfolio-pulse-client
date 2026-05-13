@@ -3,6 +3,10 @@
 import { faArrowDown, faArrowUp, faDownload, faFilter, faMagnifyingGlass, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import TradeFormModal from "@/app/trade/components/TradeFormModal";
+import { tradeApi } from "@/lib/api/trade";
+import { TradeFormData } from "@/app/trade/components/TradeForm";
 
 type Trade = {
     _id: string;
@@ -17,14 +21,23 @@ type Trade = {
 
 type Props = {
     trades: Trade[];
+    onTradeAdded?: () => void;
 };
 
 const TRADE_TYPES = ["All", "Buy", "Sell"];
 
-export default function TradesTable({ trades }: Props) {
+export default function TradesTable({ trades, onTradeAdded }: Props) {
+    const router = useRouter();
     const [search, setSearch] = useState("");
     const [typeFilter, setTypeFilter] = useState("All");
     const [showFilters, setShowFilters] = useState(false);
+    const [addModal, setAddModal] = useState(false);
+
+    const handleAddTrade = async (data: TradeFormData) => {
+        await tradeApi.create(data);
+        setAddModal(false);
+        onTradeAdded?.();
+    };
 
     const filtered = trades.filter((t) => {
         const matchesSearch =
@@ -59,7 +72,7 @@ export default function TradesTable({ trades }: Props) {
         <div className="bg-[#1a1d27]/80 backdrop-blur-md border border-white/8 rounded-2xl overflow-hidden">
             {/* Header */}
             <div className="px-6 py-4 flex flex-wrap items-center justify-between gap-3 border-b border-white/8">
-                <h3 className="text-lg font-semibold text-white font-[var(--font-hanken-grotesk)]">
+                <h3 className="text-lg font-semibold text-white">
                     Active Positions &amp; Trades
                 </h3>
                 <div className="flex items-center gap-2">
@@ -78,8 +91,8 @@ export default function TradesTable({ trades }: Props) {
                         Export CSV
                     </button>
                     <button
-                        onClick={() => (window.location.href = "/trade/new")}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4d8eff] text-[#001a42] font-bold text-sm shadow-lg shadow-[#4d8eff]/20 hover:scale-105 active:scale-100 transition-all"
+                        onClick={() => setAddModal(true)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4d8eff] text-[#001a42] font-bold text-sm shadow-lg shadow-[#4d8eff]/20 hover:scale-105 active:scale-100 transition-all cursor-pointer"
                     >
                         <FontAwesomeIcon icon={faPlus} className="text-xs" />
                         Add Trade
@@ -129,7 +142,7 @@ export default function TradesTable({ trades }: Props) {
             <div className="overflow-x-auto">
                 <table className="w-full text-left">
                     <thead>
-                        <tr className="bg-white/3 text-gray-500 text-xs uppercase tracking-wider font-[var(--font-jet-brains-mono)]">
+                        <tr className="bg-white/3 text-gray-500 text-xs uppercase tracking-wider font-mono">
                             <th className="px-6 py-3 font-medium">Asset</th>
                             <th className="px-6 py-3 font-medium">Ticker</th>
                             <th className="px-6 py-3 font-medium text-center">Type</th>
@@ -154,7 +167,7 @@ export default function TradesTable({ trades }: Props) {
                                 return (
                                     <tr key={trade._id} className="hover:bg-white/3 transition-colors">
                                         <td className="px-6 py-4">
-                                            <span className="text-sm text-gray-200 font-medium max-w-[180px] block truncate" title={trade.assetName}>
+                                            <span className="text-sm text-gray-200 font-medium max-w-45 block truncate" title={trade.assetName}>
                                                 {trade.assetName}
                                             </span>
                                         </td>
@@ -187,7 +200,7 @@ export default function TradesTable({ trades }: Props) {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <button
-                                                onClick={() => (window.location.href = `/trade/${trade._id}`)}
+                                                onClick={() => router.push(`/trade/${trade._id}`)}
                                                 className="px-3 py-1.5 rounded-lg bg-[#4d8eff]/10 text-[#adc6ff] hover:bg-[#4d8eff]/20 text-xs font-medium transition-all cursor-pointer"
                                             >
                                                 View Details
@@ -205,6 +218,15 @@ export default function TradesTable({ trades }: Props) {
             <div className="px-6 py-3 border-t border-white/8 text-xs text-gray-600">
                 Showing {filtered.length} of {trades.length} trades
             </div>
+
+            {/* Add Trade Modal */}
+            {addModal && (
+                <TradeFormModal
+                    mode="add"
+                    onSubmit={handleAddTrade}
+                    onClose={() => setAddModal(false)}
+                />
+            )}
         </div>
     );
 }

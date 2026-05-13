@@ -69,7 +69,7 @@ export default function HeaderSection() {
             </Link>
 
             {/* Search bar */}
-            <div className="relative hidden sm:block w-64 lg:w-80">
+            {/* <div className="relative hidden sm:block w-64 lg:w-80">
                 <input
                     type="text"
                     placeholder="Search markets..."
@@ -79,7 +79,7 @@ export default function HeaderSection() {
                     icon={faMagnifyingGlass}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"
                 />
-            </div>
+            </div> */}
 
             {/* Profile */}
             <div className="relative flex items-center gap-3" ref={dropdownRef}>
