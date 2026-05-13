@@ -12,7 +12,7 @@ const PROTECTED_PREFIXES = [
 // Logged-in users visiting these are bounced to /dashboard
 const AUTH_ROUTES = ["/auth", "/"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const accessToken = request.cookies.get("accessToken")?.value;
 

@@ -6,9 +6,10 @@ import Image from "next/image";
 import { useState } from "react";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
+import ForgotPassword from "./components/ForgotPassword";
 
 export default function AuthPage() {
-    const [tab, setTab] = useState<"register" | "signin">("signin");
+    const [tab, setTab] = useState<"register" | "signin" | "forgot-password">("signin");
 
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-[#10131A] px-4 py-16">
@@ -92,7 +93,13 @@ export default function AuthPage() {
                         </div>
 
                         {/* Form — swaps based on active tab */}
-                        {tab === "register" ? <Signup onSwitchToSignin={() => setTab("signin")} /> : <Signin onSwitchToRegister={() => setTab("register")} />}
+                        {tab === "register" ? (
+                            <Signup onSwitchToSignin={() => setTab("signin")} />
+                        ) : tab === "forgot-password" ? (
+                            <ForgotPassword onBack={() => setTab("signin")} />
+                        ) : (
+                            <Signin onSwitchToRegister={() => setTab("register")} onForgotPassword={() => setTab("forgot-password")} />
+                        )}
                     </div>
                 </div>
             </main>

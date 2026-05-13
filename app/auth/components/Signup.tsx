@@ -18,7 +18,7 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
         fullName: "",
         profession: "",
         email: "",
-        dateOfBirth: "",
+        dob: "",
         password: "",
         address: {
             city: "",
@@ -50,7 +50,7 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
                 fullName: formData.fullName,
                 profession: formData.profession,
                 bio: formData.bio,
-                dateOfBirth: formData.dateOfBirth,
+                dob: formData.dob,
                 address: {
                     city: formData.address.city,
                     country: formData.address.country,
@@ -201,7 +201,7 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
                 faicon={faCalendar}
                     
             >
-                <input type="date" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, dateOfBirth: e.target.value }))} value={formData.dateOfBirth} />
+                <input type="date" className={inputClass} onChange={e => setFormData((prev) => ({ ...prev, dob: e.target.value }))} value={formData.dob} />
             </InputField>
 
             {/* Password */}

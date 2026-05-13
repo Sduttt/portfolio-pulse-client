@@ -1,8 +1,26 @@
 "use client";
 
-// Profile is fetched in Signin and persisted via ProfileContext + localStorage.
-// This component is kept as a placeholder for future global auth error handling.
+import { useEffect, useState } from "react";
+import EmailVerificationModal from "./EmailVerificationModal";
+
 export default function AuthInitializer() {
-    return null;
+    const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem("profile");
+            if (!stored) return;
+            const profile = JSON.parse(stored).data;
+            if (profile && profile.emailVerified === false) {
+                setUnverifiedEmail(profile.email ?? "");
+            }
+        } catch {
+            // ignore malformed data
+        }
+    }, []);
+
+    if (!unverifiedEmail) return null;
+
+    return <EmailVerificationModal email={unverifiedEmail} />;
 }
 

@@ -7,7 +7,7 @@ import Loader from "@/app/components/Loader";
 import { authApi } from "@/lib/api/auth";
 import InputField, { inputClass } from "./InputField";
 
-export default function Signin({ onSwitchToRegister }: { onSwitchToRegister?: () => void }) {
+export default function Signin({ onSwitchToRegister, onForgotPassword }: { onSwitchToRegister?: () => void; onForgotPassword?: () => void }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -85,9 +85,9 @@ export default function Signin({ onSwitchToRegister }: { onSwitchToRegister?: ()
 
             {/* Forgot password */}
             <div className="flex justify-end">
-                <a href="#" className="text-sm text-[#A2BAF0] hover:underline">
+                <button type="button" onClick={onForgotPassword} className="text-sm text-[#A2BAF0] hover:underline cursor-pointer">
                     Forgot password?
-                </a>
+                </button>
             </div>
 
             {/* Submit */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { authApi } from "@/lib/api/auth";
-import { faMagnifyingGlass, faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
@@ -68,24 +68,14 @@ export default function HeaderSection() {
                 <Image src="/Logo.png" alt="Portfolio Pulse" width={70} height={40} priority />
             </Link>
 
-            {/* Search bar */}
-            {/* <div className="relative hidden sm:block w-64 lg:w-80">
-                <input
-                    type="text"
-                    placeholder="Search markets..."
-                    className="w-full bg-white/5 border border-white/10 rounded-full px-5 py-2 pr-10 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                />
-                <FontAwesomeIcon
-                    icon={faMagnifyingGlass}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"
-                />
-            </div> */}
-
             {/* Profile */}
             <div className="relative flex items-center gap-3" ref={dropdownRef}>
                 {profile?.fullName && (
                     <span className="hidden sm:block text-lg text-gray-300 font-semibold">
-                        {profile.fullName.charAt(0).toUpperCase() + profile.fullName.slice(1).split(" ")[0]}
+                        {profile.fullName
+                            .split(" ")
+                            .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                            .join(" ")}
                     </span>
                 )}
                 <button
