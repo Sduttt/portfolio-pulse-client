@@ -1,15 +1,15 @@
 import apiClient from "../apiClient";
 
 export const tradeApi = {
-    getAll: () => apiClient.get("/trades"),
+    getAll: () => apiClient.get("/trade"),
 
-    getById: (id: string) => apiClient.get(`/trades/${id}`),
+    getById: (id: string) => apiClient.get(`/trade/${id}`),
 
-    create: (data: unknown) => apiClient.post("/trades", data),
+    create: (data: unknown) => apiClient.post("/trade", data),
 
-    update: (id: string, data: unknown) => apiClient.put(`/trades/${id}`, data),
+    update: (id: string, data: unknown) => apiClient.put(`/trade/${id}`, data),
 
-    delete: (id: string) => apiClient.delete(`/trades/${id}`),
+    delete: (id: string) => apiClient.delete(`/trade/${id}`),
 
-    getAnalysis: (id: string) => apiClient.get(`/trades/${id}/analysis`),
+    getAnalysis: (id: string) => apiClient.get(`/trade/${id}/analysis`),
 };

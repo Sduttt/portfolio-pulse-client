@@ -28,7 +28,6 @@ export default function HeaderSection() {
         if (stored) {
             try {
                 const parsed = JSON.parse(stored).data;
-                console.log("🔍 profile keys:", Object.keys(parsed), parsed);
                 setProfile(parsed);
             } catch {
                 // ignore malformed data
