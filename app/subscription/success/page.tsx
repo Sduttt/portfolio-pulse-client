@@ -8,11 +8,7 @@ import Image from "next/image";
 import { subscriptionApi } from "@/lib/api/subscription";
 import Loader from "@/app/components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faCircleCheck,
-    faCircleXmark,
-    faCrown,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faCircleXmark, faCrown } from "@fortawesome/free-solid-svg-icons";
 
 type Status = "loading" | "success" | "error" | "missing";
 
@@ -30,9 +26,7 @@ function SubscriptionSuccessContent() {
         subscriptionApi
             .verifySession(sessionId)
             .then((res) => {
-                setMessage(
-                    res.data?.message ?? "Your Pulse Pro subscription is now active."
-                );
+                setMessage(res.data?.message ?? "Your Pulse Pro subscription is now active.");
                 setStatus("success");
 
                 // Update cached profile so the rest of the app reflects PRO status
@@ -113,7 +107,7 @@ function SubscriptionSuccessContent() {
                             </div>
                             <Link
                                 href="/dashboard"
-                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4d8eff] px-6 py-3 font-hanken text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100"
+                                className="font-hanken flex w-full items-center justify-center gap-2 rounded-xl bg-[#4d8eff] px-6 py-3 text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100"
                             >
                                 <FontAwesomeIcon icon={faCircleCheck} />
                                 Go to Dashboard

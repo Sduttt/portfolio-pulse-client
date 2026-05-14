@@ -103,10 +103,7 @@ export default function TradePage() {
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const msg: string = err.response?.data?.message ?? "";
-                if (
-                    err.response?.status === 403 ||
-                    msg.toLowerCase().includes("subscription")
-                ) {
+                if (err.response?.status === 403 || msg.toLowerCase().includes("subscription")) {
                     setSubscriptionRequired(true);
                 } else {
                     console.error("Error running analysis:", err);

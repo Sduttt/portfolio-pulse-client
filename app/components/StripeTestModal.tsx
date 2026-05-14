@@ -83,7 +83,10 @@ export default function StripeTestModal({ onClose, onProceed, loading = false }:
                 <div className="flex items-center justify-between border-b border-gray-700/30 px-6 py-4">
                     <div className="flex items-center gap-3">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#4d8eff]/15">
-                            <FontAwesomeIcon icon={faCreditCard} className="text-sm text-[#4d8eff]" />
+                            <FontAwesomeIcon
+                                icon={faCreditCard}
+                                className="text-sm text-[#4d8eff]"
+                            />
                         </div>
                         <div>
                             <h2 className="font-hanken text-sm font-bold text-gray-100">
@@ -112,34 +115,23 @@ export default function StripeTestModal({ onClose, onProceed, loading = false }:
                             className="mt-0.5 shrink-0 text-sm text-[#4d8eff]"
                         />
                         <p className="text-xs leading-relaxed text-gray-400">
-                            This is running in Stripe&nbsp;<span className="font-semibold text-[#adc6ff]">test mode</span>.
-                            Use the card details below — no real money will be charged.
+                            This is running in Stripe&nbsp;
+                            <span className="font-semibold text-[#adc6ff]">test mode</span>. Use the
+                            card details below — no real money will be charged.
                         </p>
                     </div>
 
                     {/* Card details */}
-                    <FieldRow
-                        label="Card Number"
-                        value={CARD_NUMBER}
-                        copyable
-                    />
+                    <FieldRow label="Card Number" value={CARD_NUMBER} copyable />
                     <div className="grid grid-cols-2 gap-3">
                         <FieldRow
                             label="Expiry Date"
                             value="12 / 28"
                             hint="Any future date works"
                         />
-                        <FieldRow
-                            label="CVV"
-                            value="123"
-                            hint="Any 3 digits work"
-                        />
+                        <FieldRow label="CVV" value="123" hint="Any 3 digits work" />
                     </div>
-                    <FieldRow
-                        label="Cardholder Name"
-                        value="Test User"
-                        hint="Any name works"
-                    />
+                    <FieldRow label="Cardholder Name" value="Test User" hint="Any name works" />
                     <FieldRow
                         label="ZIP / Postal Code"
                         value="12345"
@@ -158,14 +150,14 @@ export default function StripeTestModal({ onClose, onProceed, loading = false }:
                     <button
                         onClick={onClose}
                         disabled={loading}
-                        className="flex-1 cursor-pointer rounded-xl border border-gray-700/40 bg-transparent py-2.5 font-hanken text-sm font-semibold text-gray-400 transition-all hover:bg-gray-700/30 hover:text-gray-200 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="font-hanken flex-1 cursor-pointer rounded-xl border border-gray-700/40 bg-transparent py-2.5 text-sm font-semibold text-gray-400 transition-all hover:bg-gray-700/30 hover:text-gray-200 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={onProceed}
                         disabled={loading}
-                        className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#4d8eff] py-2.5 font-hanken text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="font-hanken flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#4d8eff] py-2.5 text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {loading ? (
                             <Loader size="sm" color="border-[#001a42]" />

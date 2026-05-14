@@ -86,7 +86,7 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
                 portfolioSizeInINR: formData.portfolioSizeInINR
                     ? Number(formData.portfolioSizeInINR)
                     : undefined,
-            })) as { success: boolean; message: string };
+            })) as unknown as { success: boolean; message: string };
             setModal({ success: true, message: result.message ?? "Registration successful!" });
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : "Something went wrong";

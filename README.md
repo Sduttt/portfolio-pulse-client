@@ -27,17 +27,17 @@ This repository contains the **client-side code** of Portfolio Pulse. The backen
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | [Next.js 16](https://nextjs.org/) (App Router) |
-| Language | TypeScript 5 |
-| Styling | Tailwind CSS v4 |
-| HTTP Client | Axios |
-| Icons | Font Awesome Free Solid |
-| Fonts | JetBrains Mono · Hanken Grotesk · Inter (Google Fonts) |
-| Payments | Stripe (test mode) |
-| Linting | ESLint + `eslint-config-next` |
-| Formatting | Prettier + `prettier-plugin-tailwindcss` |
+| Layer       | Technology                                             |
+| ----------- | ------------------------------------------------------ |
+| Framework   | [Next.js 16](https://nextjs.org/) (App Router)         |
+| Language    | TypeScript 5                                           |
+| Styling     | Tailwind CSS v4                                        |
+| HTTP Client | Axios                                                  |
+| Icons       | Font Awesome Free Solid                                |
+| Fonts       | JetBrains Mono · Hanken Grotesk · Inter (Google Fonts) |
+| Payments    | Stripe (test mode)                                     |
+| Linting     | ESLint + `eslint-config-next`                          |
+| Formatting  | Prettier + `prettier-plugin-tailwindcss`               |
 
 ---
 

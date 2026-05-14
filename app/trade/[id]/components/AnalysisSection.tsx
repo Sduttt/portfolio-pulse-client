@@ -69,7 +69,9 @@ export default function AnalysisSection({
             if (url) window.location.href = url;
         } catch (err: any) {
             setShowStripeModal(false);
-            setCheckoutError(err.response?.data?.message ?? "Failed to start checkout. Please try again.");
+            setCheckoutError(
+                err.response?.data?.message ?? "Failed to start checkout. Please try again."
+            );
         } finally {
             setCheckoutLoading(false);
         }
@@ -94,7 +96,7 @@ export default function AnalysisSection({
                     />
                 )}
                 <div className="flex flex-col items-center gap-5 rounded-2xl border border-yellow-400/20 bg-yellow-400/5 p-8 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400/10 border border-yellow-400/20">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-yellow-400/20 bg-yellow-400/10">
                         <FontAwesomeIcon icon={faCrown} className="text-xl text-yellow-400" />
                     </div>
                     <div>
@@ -104,11 +106,12 @@ export default function AnalysisSection({
                             unlock rationality scores, sentiment analysis, and actionable feedback.
                         </p>
                     </div>
-                    {checkoutError && (
-                        <p className="text-xs text-red-400">{checkoutError}</p>
-                    )}
+                    {checkoutError && <p className="text-xs text-red-400">{checkoutError}</p>}
                     <button
-                        onClick={() => { setCheckoutError(null); setShowStripeModal(true); }}
+                        onClick={() => {
+                            setCheckoutError(null);
+                            setShowStripeModal(true);
+                        }}
                         className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#4d8eff] px-6 py-3 text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100"
                     >
                         <FontAwesomeIcon icon={faCrown} />
