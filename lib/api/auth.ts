@@ -11,6 +11,7 @@ export const authApi = {
         gender?: string;
         address?: { city: string; country: string };
         avatar?: File;
+        portfolioSizeInINR?: number;
     }) => {
         const form = new FormData();
         form.append("email", data.email);
@@ -21,6 +22,8 @@ export const authApi = {
         if (data.dob) form.append("dob", data.dob);
         if (data.gender) form.append("gender", data.gender);
         if (data.address) form.append("address", JSON.stringify(data.address));
+        if (data.portfolioSizeInINR != null)
+            form.append("portfolioSizeInINR", String(data.portfolioSizeInINR));
         // Only append avatar if a file was actually selected and has content
         if (data.avatar && data.avatar.size > 0) form.append("avatar", data.avatar);
         return apiClient.post("/user/register", form);
@@ -45,6 +48,7 @@ export const authApi = {
         dob?: string;
         gender?: string;
         address?: { city: string; country: string };
+        portfolioSizeInINR?: number;
     }) => apiClient.patch("/user/profile", data),
 
     verifyEmail: (token: string) => apiClient.get("/user/verify-email", { params: { token } }),

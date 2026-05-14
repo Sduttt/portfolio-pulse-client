@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="public/Logo.png" alt="Portfolio Pulse Logo" width="120" />
+</p>
+
+<h1 align="center">Portfolio Pulse — Client</h1>
+
+<p align="center">
+  Front-end client for <strong>Portfolio Pulse</strong>, an AI-powered institutional trading analysis platform.
+  <br />
+  Track trades, run AI rationality analysis, manage your portfolio, and upgrade to Pulse Pro — all in one place.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16.2.6-black?style=flat-square&logo=next.js" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss" />
+</p>
+
+---
+
+## Overview
+
+This repository contains the **client-side code** of Portfolio Pulse. The backend API is hosted separately — see the [Backend API](#backend-api) section below.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | [Next.js 16](https://nextjs.org/) (App Router) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 |
+| HTTP Client | Axios |
+| Icons | Font Awesome Free Solid |
+| Fonts | JetBrains Mono · Hanken Grotesk · Inter (Google Fonts) |
+| Payments | Stripe (test mode) |
+| Linting | ESLint + `eslint-config-next` |
+| Formatting | Prettier + `prettier-plugin-tailwindcss` |
+
+---
+
+## Features
+
+- **Authentication** — Register, sign in, forgot/reset password, email verification
+- **Dashboard** — Overview of all trades and portfolio performance
+- **Trade Management** — Add, view, edit, and delete trades
+- **AI Analysis** — Rationality score, sentiment analysis, and structured feedback (Pulse Pro)
+- **Profile Management** — Edit personal details, upload avatar, manage subscription
+- **Subscription** — Stripe-powered Pulse Pro upgrade with test mode support
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js ≥ 18
+- npm
+
+### Installation
+
+```bash
+git clone <repo-url>
+cd client
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```env
+NEXT_PUBLIC_API_URL=https://portfolio-pulse-delta.vercel.app/api/v1
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Build
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Backend API
 
-To learn more about Next.js, take a look at the following resources:
+The backend REST API is live at:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+https://portfolio-pulse-delta.vercel.app/api/v1
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Server source code: [github.com/Sduttt/portfolio-pulse-server](https://github.com/Sduttt/portfolio-pulse-server)
 
-## Deploy on Vercel
+All client API calls are proxied through Next.js Route Handlers in production to handle cookie forwarding and CORS.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+```
+app/
+├── auth/               # Sign in, register, forgot/reset password
+├── dashboard/          # Trade overview
+├── profile/            # User profile & subscription management
+├── trade/              # Add trade · Trade detail & AI analysis
+├── subscription/       # Payment success verification
+├── verify-email/       # Email verification landing
+├── reset-password/     # Password reset landing
+└── components/         # Shared UI components
+
+lib/
+├── apiClient.ts        # Axios instance (SSR / CSR aware)
+└── api/                # Auth · Trade · Portfolio · Subscription API helpers
+```

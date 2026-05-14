@@ -82,7 +82,7 @@ export default function HeaderSection() {
                 )}
                 <button
                     onClick={() => setDropdownOpen((prev) => !prev)}
-                    className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/10 text-gray-300 transition-colors hover:bg-white/20"
+                    className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/10 text-gray-300 transition-colors hover:bg-white/20"
                     aria-label="Profile menu"
                 >
                     {profile?.avatar ? (

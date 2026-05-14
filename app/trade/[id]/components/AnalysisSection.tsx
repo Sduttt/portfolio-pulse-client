@@ -1,10 +1,14 @@
 "use client";
+import { useState } from "react";
 import Loader from "@/app/components/Loader";
+import StripeTestModal from "@/app/components/StripeTestModal";
+import { subscriptionApi } from "@/lib/api/subscription";
 import {
     faChartLine,
     faThumbsUp,
     faThumbsDown,
     faPaperPlane,
+    faCrown,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ScoreRing from "./ScoreRing";
@@ -18,10 +22,25 @@ function sentimentColor(s: string) {
     return "text-[#adc6ff]";
 }
 
+function parseFeedback(feedback: string): { label: string | null; text: string }[] {
+    // Split on "- " that precedes a capitalised word (the label)
+    const parts = feedback.split(/\s*-\s+(?=[A-Z])/).filter(Boolean);
+    if (parts.length <= 1) return [{ label: null, text: feedback.trim() }];
+    return parts.map((part) => {
+        const colonIdx = part.indexOf(":");
+        if (colonIdx === -1) return { label: null, text: part.trim() };
+        return {
+            label: part.slice(0, colonIdx).trim(),
+            text: part.slice(colonIdx + 1).trim(),
+        };
+    });
+}
+
 type Props = {
     analysis: Analysis | null;
     analysisLoading: boolean;
     runningAnalysis: boolean;
+    subscriptionRequired: boolean;
     onRunAnalysis: () => void;
     onLikeClick: () => void;
     onDislikeClick: () => void;
@@ -32,16 +51,71 @@ export default function AnalysisSection({
     analysis,
     analysisLoading,
     runningAnalysis,
+    subscriptionRequired,
     onRunAnalysis,
     onLikeClick,
     onDislikeClick,
     onFeedbackClick,
 }: Props) {
+    const [showStripeModal, setShowStripeModal] = useState(false);
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
+    const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+    const handleCheckout = async () => {
+        setCheckoutLoading(true);
+        try {
+            const res = await subscriptionApi.createCheckoutSession();
+            const url: string = res.data?.url ?? res.data?.checkoutUrl ?? res.data;
+            if (url) window.location.href = url;
+        } catch (err: any) {
+            setShowStripeModal(false);
+            setCheckoutError(err.response?.data?.message ?? "Failed to start checkout. Please try again.");
+        } finally {
+            setCheckoutLoading(false);
+        }
+    };
+
     if (analysisLoading) {
         return (
             <div className="flex justify-center py-10">
                 <Loader size="lg" color="border-[#4d8eff]" />
             </div>
+        );
+    }
+
+    if (subscriptionRequired) {
+        return (
+            <>
+                {showStripeModal && (
+                    <StripeTestModal
+                        onClose={() => setShowStripeModal(false)}
+                        onProceed={handleCheckout}
+                        loading={checkoutLoading}
+                    />
+                )}
+                <div className="flex flex-col items-center gap-5 rounded-2xl border border-yellow-400/20 bg-yellow-400/5 p-8 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400/10 border border-yellow-400/20">
+                        <FontAwesomeIcon icon={faCrown} className="text-xl text-yellow-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold text-white">Pro Feature</h3>
+                        <p className="mt-1 max-w-sm text-sm text-gray-400">
+                            AI trade analysis requires an active Pulse Pro subscription. Upgrade to
+                            unlock rationality scores, sentiment analysis, and actionable feedback.
+                        </p>
+                    </div>
+                    {checkoutError && (
+                        <p className="text-xs text-red-400">{checkoutError}</p>
+                    )}
+                    <button
+                        onClick={() => { setCheckoutError(null); setShowStripeModal(true); }}
+                        className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#4d8eff] px-6 py-3 text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100"
+                    >
+                        <FontAwesomeIcon icon={faCrown} />
+                        Upgrade to Pro — ₹49/mo
+                    </button>
+                </div>
+            </>
         );
     }
 
@@ -117,10 +191,34 @@ export default function AnalysisSection({
             </div>
 
             <div className="mb-8 rounded-xl border border-transparent bg-white/3 p-6 transition-all hover:border-white/10 hover:bg-white/6">
-                <p className="mb-3 font-mono text-xs tracking-wider text-gray-500 uppercase">
+                <p className="mb-4 font-mono text-xs tracking-wider text-gray-500 uppercase">
                     AI Feedback
                 </p>
-                <p className="leading-relaxed text-gray-300">{analysis.ai_feedback}</p>
+                {(() => {
+                    const items = parseFeedback(analysis.ai_feedback ?? "");
+                    if (items.length === 1 && !items[0].label) {
+                        return (
+                            <p className="text-sm leading-relaxed text-gray-300">{items[0].text}</p>
+                        );
+                    }
+                    return (
+                        <ul className="flex flex-col gap-4">
+                            {items.map((item, i) => (
+                                <li key={i} className="flex gap-3">
+                                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#4d8eff]" />
+                                    <p className="text-sm leading-relaxed text-gray-300">
+                                        {item.label && (
+                                            <span className="font-semibold text-[#adc6ff]">
+                                                {item.label}:{" "}
+                                            </span>
+                                        )}
+                                        {item.text}
+                                    </p>
+                                </li>
+                            ))}
+                        </ul>
+                    );
+                })()}
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/8 pt-6">

@@ -132,7 +132,11 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
             e.quantity = "Enter a valid quantity";
         if (form.pricePerUnit === "" || Number(form.pricePerUnit) <= 0)
             e.pricePerUnit = "Enter a valid price";
-        if (!form.tradeDate) e.tradeDate = "Trade date is required";
+        if (!form.tradeDate) {
+            e.tradeDate = "Trade date is required";
+        } else if (form.tradeDate > new Date().toISOString().split("T")[0]) {
+            e.tradeDate = "Trade date cannot be in the future";
+        }
         setErrors(e);
         return Object.keys(e).length === 0;
     };
@@ -352,6 +356,7 @@ export default function TradeForm({ mode, initialData, onSubmit, onCancel }: Pro
                             type="date"
                             value={form.tradeDate}
                             onChange={(e) => set("tradeDate", e.target.value)}
+                            max={new Date().toISOString().split("T")[0]}
                             className={`${inputClass} scheme-dark`}
                         />
                         {errors.tradeDate && (

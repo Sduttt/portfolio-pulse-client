@@ -24,6 +24,7 @@ export default function TradePage() {
     const [tradeLoading, setTradeLoading] = useState(true);
     const [analysisLoading, setAnalysisLoading] = useState(true);
     const [runningAnalysis, setRunningAnalysis] = useState(false);
+    const [subscriptionRequired, setSubscriptionRequired] = useState(false);
 
     const [feedbackModal, setFeedbackModal] = useState(false);
     const [feedbackResponse, setFeedbackResponse] = useState<"Like" | "Dislike" | "Neutral">(
@@ -42,6 +43,22 @@ export default function TradePage() {
     };
 
     useEffect(() => {
+        // Pre-check subscription status from localStorage to avoid unnecessary API call
+        try {
+            const stored = localStorage.getItem("profile");
+            if (stored) {
+                const profile = JSON.parse(stored).data;
+                if (profile?.subscriptionStatus === false) {
+                    setSubscriptionRequired(true);
+                    setAnalysisLoading(false);
+                }
+            }
+        } catch {
+            // ignore
+        }
+    }, []);
+
+    useEffect(() => {
         const fetchTrade = async () => {
             try {
                 const res = await tradeApi.getById(tradeId);
@@ -58,8 +75,16 @@ export default function TradePage() {
                 const res = await tradeApi.getAnalysis(tradeId);
                 setAnalysis(res.data.data);
             } catch (err) {
-                if (axios.isAxiosError(err) && err.response?.status === 404) {
-                    setAnalysis(null);
+                if (axios.isAxiosError(err)) {
+                    const msg: string = err.response?.data?.message ?? "";
+                    if (
+                        err.response?.status === 403 ||
+                        msg.toLowerCase().includes("subscription")
+                    ) {
+                        setSubscriptionRequired(true);
+                    } else if (err.response?.status !== 404) {
+                        console.error("Error fetching analysis:", err);
+                    }
                 }
             } finally {
                 setAnalysisLoading(false);
@@ -76,7 +101,17 @@ export default function TradePage() {
             const res = await tradeApi.runAnalysis(tradeId);
             setAnalysis(res.data.data);
         } catch (err) {
-            console.error("Error running analysis:", err);
+            if (axios.isAxiosError(err)) {
+                const msg: string = err.response?.data?.message ?? "";
+                if (
+                    err.response?.status === 403 ||
+                    msg.toLowerCase().includes("subscription")
+                ) {
+                    setSubscriptionRequired(true);
+                } else {
+                    console.error("Error running analysis:", err);
+                }
+            }
         } finally {
             setRunningAnalysis(false);
         }
@@ -160,6 +195,7 @@ export default function TradePage() {
                 analysis={analysis}
                 analysisLoading={analysisLoading}
                 runningAnalysis={runningAnalysis}
+                subscriptionRequired={subscriptionRequired}
                 onRunAnalysis={handleRunAnalysis}
                 onLikeClick={() => {
                     setFeedbackResponse("Like");

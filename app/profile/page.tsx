@@ -2,8 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { authApi } from "@/lib/api/auth";
+import { subscriptionApi } from "@/lib/api/subscription";
 import Loader from "@/app/components/Loader";
+import StripeTestModal from "@/app/components/StripeTestModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faCamera,
@@ -15,6 +18,10 @@ import {
     faLocationDot,
     faCalendar,
     faVenusMars,
+    faCoins,
+    faCrown,
+    faBolt,
+    faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface Profile {
@@ -28,6 +35,8 @@ interface Profile {
     avatar?: string;
     address?: { city: string; country: string };
     createdAt?: string;
+    portfolioSizeInINR?: number;
+    subscriptionStatus?: boolean;
 }
 
 interface FormState {
@@ -38,6 +47,7 @@ interface FormState {
     gender: string;
     city: string;
     country: string;
+    portfolioSizeInINR: string;
 }
 
 const inputClass =
@@ -80,23 +90,44 @@ export default function ProfilePage() {
         gender: "",
         city: "",
         country: "",
+        portfolioSizeInINR: "",
     });
     const [saving, setSaving] = useState(false);
     const [avatarUploading, setAvatarUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [dobFieldError, setDobFieldError] = useState<string | null>(null);
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
+    const [showStripeModal, setShowStripeModal] = useState(false);
     const avatarInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        const stored = localStorage.getItem("profile");
-        if (stored) {
-            try {
+        // Show cached data immediately, then refresh from API
+        try {
+            const stored = localStorage.getItem("profile");
+            if (stored) {
                 const parsed: Profile = JSON.parse(stored).data;
                 setProfile(parsed);
-            } catch {
-                // ignore malformed data
             }
+        } catch {
+            // ignore malformed data
         }
+
+        authApi.getProfile().then((res) => {
+            const fresh: Profile = res.data?.data ?? res.data;
+            setProfile(fresh);
+            // Keep localStorage in sync
+            try {
+                const stored = localStorage.getItem("profile");
+                const parsed = stored ? JSON.parse(stored) : {};
+                parsed.data = fresh;
+                localStorage.setItem("profile", JSON.stringify(parsed));
+            } catch {
+                // ignore
+            }
+        }).catch(() => {
+            // silently fall back to cached data already rendered
+        });
     }, []);
 
     const patchLocalStorage = (patch: Partial<Profile>) => {
@@ -121,6 +152,9 @@ export default function ProfilePage() {
             gender: profile.gender ?? "",
             city: profile.address?.city ?? "",
             country: profile.address?.country ?? "",
+            portfolioSizeInINR: profile.portfolioSizeInINR != null
+                ? String(profile.portfolioSizeInINR)
+                : "",
         });
         setError(null);
         setSuccess(null);
@@ -130,9 +164,20 @@ export default function ProfilePage() {
     const cancelEdit = () => {
         setEditing(false);
         setError(null);
+        setDobFieldError(null);
     };
 
     const saveEdit = async () => {
+        // Validate DOB before calling API
+        if (form.dob) {
+            const maxDob = new Date();
+            maxDob.setFullYear(maxDob.getFullYear() - 18);
+            if (new Date(form.dob) > maxDob) {
+                setDobFieldError("You must be at least 18 years old.");
+                setError("Date of birth must be at least 18 years in the past.");
+                return;
+            }
+        }
         setSaving(true);
         setError(null);
         try {
@@ -146,6 +191,9 @@ export default function ProfilePage() {
                     form.city || form.country
                         ? { city: form.city, country: form.country }
                         : undefined,
+                portfolioSizeInINR: form.portfolioSizeInINR
+                    ? Number(form.portfolioSizeInINR)
+                    : undefined,
             });
             const updated: Profile = res.data?.data ?? res.data;
             setProfile(updated);
@@ -185,6 +233,25 @@ export default function ProfilePage() {
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
             setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
+    const openCheckoutModal = () => {
+        setError(null);
+        setShowStripeModal(true);
+    };
+
+    const handleCheckout = async () => {
+        setCheckoutLoading(true);
+        try {
+            const res = await subscriptionApi.createCheckoutSession();
+            const url: string = res.data?.url ?? res.data?.checkoutUrl ?? res.data;
+            if (url) window.location.href = url;
+        } catch (err: any) {
+            setShowStripeModal(false);
+            setError(err.response?.data?.message ?? "Failed to start checkout. Please try again.");
+        } finally {
+            setCheckoutLoading(false);
+        }
+    };
+
     const joinedDate = profile?.createdAt
         ? new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(
               new Date(profile.createdAt)
@@ -212,8 +279,21 @@ export default function ProfilePage() {
         .join(", ");
 
     return (
+        <>
+        {showStripeModal && (
+            <StripeTestModal
+                onClose={() => setShowStripeModal(false)}
+                onProceed={handleCheckout}
+                loading={checkoutLoading}
+            />
+        )}
         <div className="min-h-[80vh] px-4 py-10 md:px-10">
             <div className="mx-auto max-w-4xl space-y-6">
+                {/* Back link */}
+                <Link href="/dashboard" className="flex w-fit items-center gap-2 text-sm text-gray-400 hover:text-[#A2BAF0] transition-colors">
+                    <FontAwesomeIcon icon={faArrowLeft} className="text-xs" />
+                    Back to Dashboard
+                </Link>
                 {/* Banners */}
                 {error && (
                     <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
@@ -281,11 +361,19 @@ export default function ProfilePage() {
                                 <h1 className="font-hanken text-2xl leading-tight font-bold text-[#adc6ff] md:text-3xl">
                                     {profile.fullName}
                                 </h1>
-                                {profile.profession && (
-                                    <p className="mt-0.5 text-sm font-medium text-[#4edea3]">
-                                        {profile.profession}
-                                    </p>
-                                )}
+                                <div className="mt-0.5 flex flex-wrap items-center justify-center gap-2 md:justify-start">
+                                    {profile.profession && (
+                                        <p className="text-sm font-medium text-[#4edea3]">
+                                            {profile.profession}
+                                        </p>
+                                    )}
+                                    {profile.subscriptionStatus && (
+                                        <span className="flex items-center gap-1 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-yellow-400">
+                                            <FontAwesomeIcon icon={faCrown} className="text-[9px]" />
+                                            PRO
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                             {profile.bio && (
                                 <p className="max-w-lg text-sm leading-relaxed text-gray-400">
@@ -461,22 +549,41 @@ export default function ProfilePage() {
                             editing={editing}
                             view={dobDisplay ?? <span className="text-gray-600">—</span>}
                             edit={
-                                <div className={fieldWrap}>
-                                    <FontAwesomeIcon
-                                        icon={faCalendar}
-                                        className="mr-3 shrink-0 text-xs text-gray-500"
-                                    />
-                                    <input
-                                        type="date"
-                                        value={form.dob}
-                                        onChange={set("dob")}
-                                        max={(() => {
-                                            const d = new Date();
-                                            d.setFullYear(d.getFullYear() - 18);
-                                            return d.toISOString().slice(0, 10);
-                                        })()}
-                                        className={inputClass}
-                                    />
+                                <div className="flex flex-col gap-1">
+                                    <div className={`${fieldWrap} ${dobFieldError ? "border-red-500/60" : ""}` }>
+                                        <FontAwesomeIcon
+                                            icon={faCalendar}
+                                            className="mr-3 shrink-0 text-xs text-gray-500"
+                                        />
+                                        <input
+                                            type="date"
+                                            value={form.dob}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setForm((prev) => ({ ...prev, dob: val }));
+                                                if (val) {
+                                                    const maxDob = new Date();
+                                                    maxDob.setFullYear(maxDob.getFullYear() - 18);
+                                                    setDobFieldError(
+                                                        new Date(val) > maxDob
+                                                            ? "You must be at least 18 years old."
+                                                            : null
+                                                    );
+                                                } else {
+                                                    setDobFieldError(null);
+                                                }
+                                            }}
+                                            max={(() => {
+                                                const d = new Date();
+                                                d.setFullYear(d.getFullYear() - 18);
+                                                return d.toISOString().slice(0, 10);
+                                            })()}
+                                            className={inputClass}
+                                        />
+                                    </div>
+                                    {dobFieldError && (
+                                        <p className="text-xs text-red-400">{dobFieldError}</p>
+                                    )}
                                 </div>
                             }
                         />
@@ -527,6 +634,38 @@ export default function ProfilePage() {
                             }
                         />
 
+                        {/* Portfolio Size */}
+                        <Field
+                            label="Portfolio Size (₹)"
+                            editing={editing}
+                            view={
+                                profile.portfolioSizeInINR != null ? (
+                                    <span>
+                                        ₹
+                                        {profile.portfolioSizeInINR.toLocaleString("en-IN")}
+                                    </span>
+                                ) : (
+                                    <span className="text-gray-600">—</span>
+                                )
+                            }
+                            edit={
+                                <div className={fieldWrap}>
+                                    <FontAwesomeIcon
+                                        icon={faCoins}
+                                        className="mr-3 shrink-0 text-xs text-gray-500"
+                                    />
+                                    <input
+                                        type="number"
+                                        min={0}
+                                        value={form.portfolioSizeInINR}
+                                        onChange={set("portfolioSizeInINR")}
+                                        className={inputClass}
+                                        placeholder="e.g. 500000"
+                                    />
+                                </div>
+                            }
+                        />
+
                         {/* Bio — full width */}
                         <Field
                             label="Bio"
@@ -551,7 +690,68 @@ export default function ProfilePage() {
                         />
                     </div>
                 </section>
+
+                {/* ── Subscription card ── */}
+                <section className="glass-panel rounded-2xl p-6 md:p-8">
+                    <h2 className="font-jetbrains mb-5 text-[10px] font-semibold tracking-widest text-gray-400 uppercase">
+                        Subscription
+                    </h2>
+
+                    {profile.subscriptionStatus ? (
+                        /* PRO user */
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-yellow-400/10 border border-yellow-400/20">
+                                <FontAwesomeIcon icon={faCrown} className="text-xl text-yellow-400" />
+                            </div>
+                            <div>
+                                <p className="font-hanken font-bold text-white">
+                                    Pulse Pro — Active
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    You have access to all premium features.
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        /* Free user — upgrade prompt */
+                        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                            <div className="flex items-start gap-4">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#4d8eff]/10 border border-[#4d8eff]/20">
+                                    <FontAwesomeIcon icon={faBolt} className="text-xl text-[#adc6ff]" />
+                                </div>
+                                <div>
+                                    <p className="font-hanken font-bold text-white">
+                                        Upgrade to Pulse Pro
+                                    </p>
+                                    <p className="mt-0.5 text-sm text-gray-400">
+                                        Unlock AI-powered insights, unlimited analysis, and real-time
+                                        sentiment feeds.
+                                    </p>
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        <span className="font-bold text-[#adc6ff] text-sm">₹49</span>
+                                        {" "}/ month
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={openCheckoutModal}
+                                disabled={checkoutLoading}
+                                className="flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#4d8eff] px-6 py-3 font-hanken text-sm font-bold text-[#001a42] shadow-lg shadow-[#4d8eff]/20 transition-all hover:scale-105 active:scale-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                {checkoutLoading ? (
+                                    <Loader size="sm" color="border-[#001a42]" />
+                                ) : (
+                                    <>
+                                        <FontAwesomeIcon icon={faCrown} />
+                                        Subscribe — ₹49/mo
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    )}
+                </section>
             </div>
         </div>
+        </>
     );
 }

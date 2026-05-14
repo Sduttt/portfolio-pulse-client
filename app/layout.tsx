@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Hanken_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+config.autoAddCss = false;
 import "./globals.css";
 import ConditionalFooter from "./components/ConditionalFooter";
 import HeaderSection from "./components/HeaderSection";

@@ -4,6 +4,7 @@ import {
     faArrowRight,
     faCalendar,
     faCity,
+    faCoins,
     faEye,
     faEyeSlash,
     faGlobe,
@@ -25,6 +26,7 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
     const [modal, setModal] = useState<{ success: boolean; message: string } | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [dobError, setDobError] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         fullName: "",
         profession: "",
@@ -37,6 +39,7 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
         },
         gender: "",
         bio: "",
+        portfolioSizeInINR: "",
     });
     const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
     const avatarFile = useRef<File | null>(null);
@@ -53,6 +56,18 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
     const submitForm = async () => {
         setLoading(true);
         setModal(null);
+        setDobError(null);
+
+        // Validate DOB — must be more than 18 years ago
+        if (formData.dob) {
+            const maxDob = new Date();
+            maxDob.setFullYear(maxDob.getFullYear() - 18);
+            if (new Date(formData.dob) > maxDob) {
+                setDobError("You must be at least 18 years old to register.");
+                setLoading(false);
+                return;
+            }
+        }
 
         try {
             const result = (await authApi.register({
@@ -68,6 +83,9 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
                 },
                 gender: formData.gender,
                 avatar: avatarFile.current ?? undefined,
+                portfolioSizeInINR: formData.portfolioSizeInINR
+                    ? Number(formData.portfolioSizeInINR)
+                    : undefined,
             })) as { success: boolean; message: string };
             setModal({ success: true, message: result.message ?? "Registration successful!" });
         } catch (err: unknown) {
@@ -251,10 +269,23 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
                     <input
                         type="date"
                         className={inputClass}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, dob: e.target.value }))}
+                        onChange={(e) => {
+                            setFormData((prev) => ({ ...prev, dob: e.target.value }));
+                            setDobError(null);
+                        }}
                         value={formData.dob}
+                        max={(() => {
+                            const d = new Date();
+                            d.setFullYear(d.getFullYear() - 18);
+                            return d.toISOString().slice(0, 10);
+                        })()}
                     />
                 </InputField>
+                {dobError && (
+                    <div className="col-span-1 md:col-span-2">
+                        <p className="text-xs text-red-400">{dobError}</p>
+                    </div>
+                )}
 
                 {/* Password */}
                 <div className="flex flex-col gap-2">
@@ -359,6 +390,20 @@ export default function Signup({ onSwitchToSignin }: { onSwitchToSignin?: () => 
                                 ...prev,
                                 address: { ...prev.address, country: e.target.value },
                             }))
+                        }
+                    />
+                </InputField>
+
+                {/* Portfolio Size */}
+                <InputField label="Portfolio Size (₹)" faicon={faCoins}>
+                    <input
+                        type="number"
+                        min={0}
+                        placeholder="e.g. 500000"
+                        className={inputClass}
+                        value={formData.portfolioSizeInINR}
+                        onChange={(e) =>
+                            setFormData((prev) => ({ ...prev, portfolioSizeInINR: e.target.value }))
                         }
                     />
                 </InputField>
